@@ -1,0 +1,14 @@
+{
+    "name": "hsldymq/data-model-php",
+    "description": "",
+    "license": "MIT",
+    "require": {
+        "php": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Archman\\DataModel\\": "src/",
+            "Archman\\DataModel\\Tests\\": "tests/"
+        }
+    }
+}
