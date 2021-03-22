@@ -12,9 +12,4 @@ class Field
     public function __construct(private string $fieldName)
     {
     }
-
-    public function getFieldName(): string
-    {
-        return $this->fieldName;
-    }
 }
