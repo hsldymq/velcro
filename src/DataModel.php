@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Archman\DataModel;
 
-use Archman\DataModel\Attributes\Field;
 use Archman\DataModel\Converters\ConverterInterface;
 use Closure;
 use ReflectionNamedType;

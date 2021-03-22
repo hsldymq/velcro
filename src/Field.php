@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\DataModel\Attributes;
+namespace Archman\DataModel;
 
 use Attribute;
 

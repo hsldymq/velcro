@@ -4,7 +4,7 @@ namespace Archman\DataModel\Tests\Models;
 
 use Archman\DataModel\Converters\DateTimeConverter;
 use Archman\DataModel\DataModel;
-use Archman\DataModel\Attributes\Field;
+use Archman\DataModel\Field;
 
 class DateTimeModel extends DataModel
 {
