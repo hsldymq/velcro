@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Archman\DataModel;
 
-use Archman\DataModel\Attributes\Converter;
 use Archman\DataModel\Attributes\Field;
 use Archman\DataModel\Converters\ConverterInterface;
 use Closure;
@@ -12,16 +11,18 @@ use Closure;
 abstract class DataModel
 {
     /**
-     * @var array [
-     *      '{className}' => [
-     *          '{propertyName}' => [
-     *              'field' => '{dataFieldName <string>}',
-     *              'converter' => {converter <ConverterInterface>},
-     *              'assigner' => {assigner <Closure>},
+     * @var array 缓存的DataModel子类解析信息. 当多次实例化同一个DataModel子类时, 只需要进行一次反射, 避免不必要的性能开销.
+     *  [
+     *      '{className}' => [                                          // 完整(含命名空间)的类名
+     *          '{propertyName}' => [                                   // 定义了Field Attribute的属性
+     *              'field' => <string>,                                // 数据的字段名
+     *              'converter' => <ConverterInterface>,                // 数据类型转换对象
+     *              'assigner' => <Closure>,                            // 赋值器(用于对private属性进行赋值)
      *          ],
+     *          ...
      *      ],
      *      ...
-     * ]
+     *  ]
      */
     private static array $cachedClasses = [];
 
@@ -58,20 +59,16 @@ abstract class DataModel
                 continue;
             }
 
-            /** @var Converter $converterAttr */
-            $converterAttr = ($prop->getAttributes(Converter::class)[0] ?? null)?->newInstance() ?? null;
+            $propsInfo[$propName] = ['field' => $fieldName];
+
             $converter = null;
-            if ($converterAttr) {
-                foreach ($prop->getAttributes($converterAttr->getConverterClass()) as $eachAttr) {
-                    $converter = $eachAttr->newInstance();
+            foreach ($prop->getAttributes() as $each) {
+                if (is_subclass_of($each->getName(), ConverterInterface::class)) {
+                    $propsInfo[$propName]['converter'] = $converter = $each->newInstance();
                     break;
                 }
             }
 
-            $propsInfo[$propName] = ['field' => $fieldName];
-            if ($converter) {
-                $propsInfo[$propName]['converter'] = $converter;
-            }
             $assigner = null;
             if ($prop->isPrivate()) {
                 $propsInfo[$propName]['assigner'] = $assigner = (function(string $propName) {
