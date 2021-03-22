@@ -63,7 +63,7 @@ abstract class DataModel
             }
 
             $propsInfo[$propName] = [
-                'propType' => self::extractPropType($prop),
+                'propType' => new PropertyType($prop),
                 'field' => $fieldName
             ];
 
@@ -124,28 +124,5 @@ abstract class DataModel
                 $this->$propName = $value;
             }
         }
-    }
-
-    /**
-     * @param ReflectionProperty $prop
-     * @return PropertyType
-     * @throws
-     */
-    private static function extractPropType(ReflectionProperty $prop): PropertyType
-    {
-        $reflectionType = $prop->getType();
-        if (!$reflectionType) {
-            // 没有类型声明即等价于mixed
-            $type = (new \ReflectionFunction(function (mixed $p) {}))->getParameters()[0]->getType();
-            return new PropertyType([$type]);
-        }
-
-        $namedTypes = match (true) {
-            $reflectionType instanceof ReflectionUnionType => $reflectionType->getTypes(),
-            $reflectionType instanceof ReflectionNamedType => [$reflectionType],
-            default => throw new \InvalidArgumentException('unknown reflection type')
-        };
-
-        return new PropertyType($namedTypes);
     }
 }
