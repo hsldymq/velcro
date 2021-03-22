@@ -1,11 +1,11 @@
 <?php
 
-namespace Archman\DataModel\Tests\DataModels;
+namespace Archman\DataModel\Tests\Models;
 
 use Archman\DataModel\DataModel;
 use Archman\DataModel\Attributes\Field;
 
-class Simple extends DataModel
+class BasicModel extends DataModel
 {
     #[Field('aa')]
     public int $a;
