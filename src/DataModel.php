@@ -8,7 +8,7 @@ use Archman\DataModel\Attributes\Converter;
 use Archman\DataModel\Attributes\Field;
 use Archman\DataModel\Converters\ConverterInterface;
 
-abstract class Model
+abstract class DataModel
 {
     private static array $cachedClasses = [];
 
