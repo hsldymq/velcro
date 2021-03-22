@@ -10,5 +10,8 @@
             "Archman\\DataModel\\": "src/",
             "Archman\\DataModel\\Tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
 }
