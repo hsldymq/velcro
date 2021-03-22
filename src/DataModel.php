@@ -7,6 +7,9 @@ namespace Archman\DataModel;
 use Archman\DataModel\Attributes\Field;
 use Archman\DataModel\Converters\ConverterInterface;
 use Closure;
+use ReflectionNamedType;
+use ReflectionProperty;
+use ReflectionUnionType;
 
 abstract class DataModel
 {
@@ -15,6 +18,7 @@ abstract class DataModel
      *  [
      *      '{className}' => [                                          // 完整(含命名空间)的类名
      *          '{propertyName}' => [                                   // 定义了Field Attribute的属性
+     *              'propType' => <PropertyType>                        // 属性的类型信息
      *              'field' => <string>,                                // 数据的字段名
      *              'converter' => <ConverterInterface>,                // 数据类型转换对象
      *              'assigner' => <Closure>,                            // 赋值器(用于对private属性进行赋值)
@@ -59,8 +63,12 @@ abstract class DataModel
                 continue;
             }
 
-            $propsInfo[$propName] = ['field' => $fieldName];
+            $propsInfo[$propName] = [
+                'propType' => self::extractPropType($prop),
+                'field' => $fieldName
+            ];
 
+            /** @var ConverterInterface $converter */
             $converter = null;
             foreach ($prop->getAttributes() as $each) {
                 if (is_subclass_of($each->getName(), ConverterInterface::class)) {
@@ -84,7 +92,7 @@ abstract class DataModel
 
             $value = $this->data[$fieldName];
             if ($converter) {
-                $value = $converter->convert($value);
+                $value = $converter->convert($value, $propsInfo[$propName]['propType']);
             }
             if ($assigner) {
                 $assigner->bindTo($this, $this)($value);
@@ -107,7 +115,7 @@ abstract class DataModel
             /** @var ConverterInterface $converter */
             $converter = $info['converter'] ?? null;
             if ($converter) {
-                $value = $converter->convert($value);
+                $value = $converter->convert($value, $info['propType']);
             }
             /** @var Closure $assigner */
             $assigner = $info['assigner'] ?? null;
@@ -117,5 +125,28 @@ abstract class DataModel
                 $this->$propName = $value;
             }
         }
+    }
+
+    /**
+     * @param ReflectionProperty $prop
+     * @return PropertyType
+     * @throws
+     */
+    private static function extractPropType(ReflectionProperty $prop): PropertyType
+    {
+        $reflectionType = $prop->getType();
+        if (!$reflectionType) {
+            // 没有类型声明即等价于mixed
+            $type = (new \ReflectionFunction(function (mixed $p) {}))->getParameters()[0]->getType();
+            return new PropertyType([$type]);
+        }
+
+        $namedTypes = match (true) {
+            $reflectionType instanceof ReflectionUnionType => $reflectionType->getTypes(),
+            $reflectionType instanceof ReflectionNamedType => [$reflectionType],
+            default => throw new \InvalidArgumentException('unknown reflection type')
+        };
+
+        return new PropertyType($namedTypes);
     }
 }
