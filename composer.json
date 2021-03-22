@@ -10,6 +10,11 @@
             "Archman\\DataModel\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Archman\\DataModel\\Tests\\": "tests/"
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
     }
