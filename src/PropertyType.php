@@ -13,7 +13,7 @@ class PropertyType
     /**
      * @var ReflectionNamedType[]
      */
-    private array $namedTypes = [];
+    private array $namedTypes;
 
     private array $types;
 
@@ -25,19 +25,11 @@ class PropertyType
             $this->namedTypes = [$mixedType];
         }
 
+        /** @var ReflectionNamedType|ReflectionUnionType $type */
         $this->namedTypes = match (true) {
-            $type instanceof ReflectionUnionType => $type->getTypes(),
             $type instanceof ReflectionNamedType => [$type],
-            default => throw new \InvalidArgumentException('unknown reflection type')
+            default => $type->getTypes(),
         };
-    }
-
-    /**
-     * @return ReflectionNamedType[]
-     */
-    public function getNamedTypes(): array
-    {
-        return $this->namedTypes;
     }
 
     public function isNullable(): bool
