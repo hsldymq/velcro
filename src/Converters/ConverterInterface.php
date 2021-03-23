@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Archman\DataModel\Converters;
 
-use Archman\DataModel\PropertyType;
+use Archman\DataModel\Type;
 
 interface ConverterInterface
 {
-    public function convert(mixed $data, PropertyType $type): mixed;
+    public function convert(mixed $fieldValue, Type $propertyType): mixed;
 }
