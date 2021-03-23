@@ -17,7 +17,7 @@ abstract class DataModel
      *              'propType' => <PropertyType>                        // 属性的类型信息
      *              'field' => <string>,                                // 数据的字段名
      *              'converter' => <ConverterInterface>,                // 数据类型转换对象
-     *              'assigner' => <Closure>,                            // 赋值器(用于对private属性进行赋值)
+     *              'setter' => <Closure>,                              // 用于对private属性进行赋值
      *          ],
      *          ...
      *      ],
@@ -73,9 +73,9 @@ abstract class DataModel
                 }
             }
 
-            $assigner = null;
+            $setter = null;
             if ($prop->isPrivate()) {
-                $propsInfo[$propName]['assigner'] = $assigner = (function(string $propName) {
+                $propsInfo[$propName]['setter'] = $setter = (function(string $propName) {
                     return function(mixed $value) use ($propName) {
                         $this->$propName = $value;
                     };
@@ -90,8 +90,8 @@ abstract class DataModel
             if ($converter) {
                 $value = $converter->convert($value, $propsInfo[$propName]['propType']);
             }
-            if ($assigner) {
-                $assigner->bindTo($this, $this)($value);
+            if ($setter) {
+                $setter->bindTo($this, $this)($value);
             } else {
                 $this->$propName = $value;
             }
@@ -113,10 +113,10 @@ abstract class DataModel
             if ($converter) {
                 $value = $converter->convert($value, $info['propType']);
             }
-            /** @var Closure $assigner */
-            $assigner = $info['assigner'] ?? null;
-            if ($assigner) {
-                $assigner->bindTo($this, $this)($value);
+            /** @var Closure $setter */
+            $setter = $info['setter'] ?? null;
+            if ($setter) {
+                $setter->bindTo($this, $this)($value);
             } else {
                 $this->$propName = $value;
             }
