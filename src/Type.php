@@ -38,6 +38,14 @@ class Type
         };
     }
 
+    /**
+     * @return ReflectionNamedType[]
+     */
+    public function getNamedTypes(): array
+    {
+        return $this->types;
+    }
+
     public function isNullable(): bool
     {
         $this->analysis();
