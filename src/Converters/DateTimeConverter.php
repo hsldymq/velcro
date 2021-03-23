@@ -26,7 +26,7 @@ class DateTimeConverter implements ConverterInterface
         }
     }
 
-    public function convert(mixed $fieldValue, PropertyType $propertyType): \DateTime
+    public function convert(mixed $fieldValue, PropertyType $type): \DateTime
     {
         return match ($this->type) {
             self::TIMESTAMP => new \DateTime("@{$fieldValue}"),

@@ -8,5 +8,5 @@ use Archman\DataModel\PropertyType;
 
 interface ConverterInterface
 {
-    public function convert(mixed $fieldValue, PropertyType $propertyType): mixed;
+    public function convert(mixed $fieldValue, PropertyType $type): mixed;
 }
