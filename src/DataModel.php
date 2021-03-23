@@ -12,8 +12,8 @@ abstract class DataModel
     /**
      * @var array 缓存的DataModel子类解析信息. 当多次实例化同一个DataModel子类时, 只需要进行一次反射, 避免不必要的性能开销.
      *  [
-     *      '{className}' => [                                          // 完整(含命名空间)的类名
-     *          '{propertyName}' => [                                   // 定义了Field Attribute的属性
+     *      $className => [                                             // 完整(含命名空间)的类名
+     *          $propertyName => [                                      // 定义了Field Attribute的属性
      *              'propType' => <PropertyType>                        // 属性的类型信息
      *              'field' => <string>,                                // 数据的字段名
      *              'converter' => <ConverterInterface>,                // 数据类型转换对象
