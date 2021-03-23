@@ -13,25 +13,19 @@ class Type
     /**
      * @var ReflectionNamedType[]
      */
-    private array $types = [];
+    private array $namedTypes = [];
 
-    /**
-     * @var array [
-     *      'isNullable' => <bool>,
-     *      'isMixed' => <bool>,
-     * ]
-     */
-    private array $typesInfo;
+    private array $types;
 
     public function __construct(?ReflectionType $type)
     {
         if (!$type) {
             // 没有类型声明即等价于mixed
             $mixedType = (new \ReflectionFunction(function (mixed $p) {}))->getParameters()[0]->getType();
-            $this->types = [$mixedType];
+            $this->namedTypes = [$mixedType];
         }
 
-        $this->types = match (true) {
+        $this->namedTypes = match (true) {
             $type instanceof ReflectionUnionType => $type->getTypes(),
             $type instanceof ReflectionNamedType => [$type],
             default => throw new \InvalidArgumentException('unknown reflection type')
@@ -43,37 +37,40 @@ class Type
      */
     public function getNamedTypes(): array
     {
-        return $this->types;
+        return $this->namedTypes;
     }
 
     public function isNullable(): bool
     {
         $this->analysis();
 
-        return $this->typesInfo['isNullable'] ?? false;
+        return $this->types['null'] ?? false;
     }
 
     public function isMixed(): bool
     {
         $this->analysis();
 
-        return $this->typesInfo['isMixed'] ?? false;
+        return $this->types['mixed'] ?? false;
     }
 
     private function analysis(): void
     {
-        if (isset($this->typesInfo)) {
+        if (isset($this->types)) {
             return;
         }
 
-        foreach ($this->types as $each) {
+        $this->types = [];
+        foreach ($this->namedTypes as $each) {
             $typeName = $each->getName();
 
             if ($typeName === 'mixed') {
-                $this->typesInfo['isMixed'] = true;
-                $this->typesInfo['isNullable'] = true;
+                $this->types['mixed'] = true;
+                $this->types['null'] = true;
             } else if ($each->allowsNull() || $typeName === 'null') {
-                $this->typesInfo['isNullable'] = true;
+                $this->types['null'] = true;
+            } else {
+                $this->types[$typeName] = true;
             }
         }
     }
