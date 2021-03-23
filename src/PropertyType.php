@@ -8,7 +8,7 @@ use ReflectionNamedType;
 use ReflectionType;
 use ReflectionUnionType;
 
-class Type
+class PropertyType
 {
     /**
      * @var ReflectionNamedType[]
@@ -17,7 +17,7 @@ class Type
 
     private array $types;
 
-    public function __construct(?ReflectionType $type)
+    public function __construct(?ReflectionType $type, private string $className)
     {
         if (!$type) {
             // 没有类型声明即等价于mixed
@@ -63,14 +63,12 @@ class Type
         $this->types = [];
         foreach ($this->namedTypes as $each) {
             $typeName = $each->getName();
+            $this->types[$typeName] = true;
 
-            if ($typeName === 'mixed') {
-                $this->types['mixed'] = true;
+            if ($typeName === 'mixed' || $each->allowsNull()) {
                 $this->types['null'] = true;
-            } else if ($each->allowsNull() || $typeName === 'null') {
-                $this->types['null'] = true;
-            } else {
-                $this->types[$typeName] = true;
+            } else if ($typeName === 'self') {
+                $this->types[$this->className] = true;
             }
         }
     }

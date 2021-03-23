@@ -60,7 +60,7 @@ abstract class DataModel
             }
 
             $propsInfo[$propName] = [
-                'propType' => new Type($prop->getType()),
+                'propType' => new PropertyType($prop->getType(), $className),
                 'field' => $fieldName
             ];
 
