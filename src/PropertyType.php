@@ -32,21 +32,41 @@ class PropertyType
         };
     }
 
+    /**
+     * 是否是指定类型之一.
+     *
+     * @param array $types 可能的类型名: 'int' / 'float' / 'string' / 'bool' / 'array' / 'null' / 'object' / 'iterable' / 'self' / 'mixed' / '{Fully-Qualified Class Name}'
+     *
+     * @return bool
+     */
+    public function isOneOf(array $types): bool
+    {
+        $this->analyze();
+
+        foreach ($types as $each) {
+            if ($this->types[$each] ?? false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isNullable(): bool
     {
-        $this->analysis();
+        $this->analyze();
 
         return $this->types['null'] ?? false;
     }
 
     public function isMixed(): bool
     {
-        $this->analysis();
+        $this->analyze();
 
         return $this->types['mixed'] ?? false;
     }
 
-    private function analysis(): void
+    private function analyze(): void
     {
         if (isset($this->types)) {
             return;
@@ -55,8 +75,12 @@ class PropertyType
         $this->types = [];
         foreach ($this->namedTypes as $each) {
             $typeName = $each->getName();
-            $this->types[$typeName] = true;
+            if ($typeName === 'false') {
+                $this->types['bool'] = true;
+                continue;
+            }
 
+            $this->types[$typeName] = true;
             if ($typeName === 'mixed' || $each->allowsNull()) {
                 $this->types['null'] = true;
             } else if ($typeName === 'self') {
