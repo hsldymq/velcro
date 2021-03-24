@@ -15,13 +15,13 @@ class PropertyType
      */
     private array $namedTypes;
 
-    private array $types;
+    private array $declaredTypes;
 
     public function __construct(?ReflectionType $type, private string $className)
     {
         if (!$type) {
             // 没有类型声明即等价于mixed
-            $this->namedTypes = [self::getMixedType()];
+            $this->namedTypes = [TypeHelper::getMixedType()];
         }
 
         /** @var ReflectionNamedType|ReflectionUnionType $type */
@@ -43,7 +43,7 @@ class PropertyType
         $this->analyze();
 
         foreach ($types as $each) {
-            if ($this->types[$each] ?? false) {
+            if ($this->declaredTypes[$each] ?? false) {
                 return true;
             }
         }
@@ -55,48 +55,25 @@ class PropertyType
     {
         $this->analyze();
 
-        return $this->types['null'] ?? false;
+        return $this->declaredTypes['null'] ?? false;
     }
 
     public function isMixed(): bool
     {
         $this->analyze();
 
-        return $this->types['mixed'] ?? false;
+        return $this->declaredTypes['mixed'] ?? false;
     }
 
     private function analyze(): void
     {
-        if (isset($this->types)) {
+        if (isset($this->declaredTypes)) {
             return;
         }
 
-        $this->types = [];
-        foreach ($this->namedTypes as $each) {
-            $typeName = $each->getName();
-            if ($typeName === 'false') {
-                $this->types['bool'] = true;
-                continue;
-            }
-
-            $this->types[$typeName] = true;
-            if ($typeName === 'mixed' || $each->allowsNull()) {
-                $this->types['null'] = true;
-            } else if ($typeName === 'self') {
-                $this->types[$this->className] = true;
-            }
+        $this->declaredTypes = TypeHelper::parseNamedTypes($this->namedTypes);
+        if (isset($this->declaredTypes['self'])) {
+            $this->declaredTypes[$this->className] = true;
         }
-    }
-
-    private static function getMixedType(): ReflectionNamedType
-    {
-        /** @var ReflectionNamedType $mixedType */
-        static $mixedType;
-
-        if (!$mixedType) {
-            $mixedType = (new \ReflectionFunction(function (mixed $p) {}))->getParameters()[0]->getType();
-        }
-
-        return $mixedType;
     }
 }
