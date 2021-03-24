@@ -2,12 +2,11 @@
 
 namespace Archman\DataModel\Tests;
 
-use Archman\DataModel\Tests\Models\DateTimeModel;
 use Archman\DataModel\Tests\Models\IntModel;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-class PrimitivesConverterTest extends TestCase
+class IntConverterTest extends TestCase
 {
     public function testIntConverter()
     {
