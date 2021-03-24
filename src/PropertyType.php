@@ -21,8 +21,7 @@ class PropertyType
     {
         if (!$type) {
             // 没有类型声明即等价于mixed
-            $mixedType = (new \ReflectionFunction(function (mixed $p) {}))->getParameters()[0]->getType();
-            $this->namedTypes = [$mixedType];
+            $this->namedTypes = [self::getMixedType()];
         }
 
         /** @var ReflectionNamedType|ReflectionUnionType $type */
@@ -87,5 +86,17 @@ class PropertyType
                 $this->types[$this->className] = true;
             }
         }
+    }
+
+    private static function getMixedType(): ReflectionNamedType
+    {
+        /** @var ReflectionNamedType $mixedType */
+        static $mixedType;
+
+        if (!$mixedType) {
+            $mixedType = (new \ReflectionFunction(function (mixed $p) {}))->getParameters()[0]->getType();
+        }
+
+        return $mixedType;
     }
 }
