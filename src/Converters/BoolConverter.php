@@ -5,20 +5,30 @@ declare(strict_types=1);
 namespace Archman\DataModel\Converters;
 
 use Archman\DataModel\PropertyType;
+use Archman\DataModel\TypeHelper;
 use Attribute;
 use TypeError;
 
 #[Attribute]
 class BoolConverter implements ConverterInterface
 {
-    public function __construct(private array $convertTypes = [])
+    public function __construct(private array $expectTypes = [])
     {
     }
 
     public function convert(mixed $fieldValue, PropertyType $type): bool
     {
-        if ($this->convertTypes && !$type->isOneOf($this->convertTypes)) {
-            throw new TypeError('bool converter: unexpect type');
+        if (is_bool($fieldValue)) {
+            return $fieldValue;
+        }
+
+        if ($this->expectTypes) {
+            [$valueType, $isValueObject] = TypeHelper::getValueType($fieldValue);
+            if (!in_array($valueType, $this->expectTypes) &&
+                (!$isValueObject || !in_array('object', $this->expectTypes))
+            ) {
+                throw new TypeError("BoolConverter: unexpect type($valueType)");
+            }
         }
 
         return boolval($fieldValue);
