@@ -82,7 +82,7 @@ abstract class DataModel
                 })($propName);
             }
 
-            if (!isset($this->data[$fieldName])) {
+            if (!array_key_exists($fieldName, $this->data)) {
                 continue;
             }
 
@@ -103,7 +103,7 @@ abstract class DataModel
     {
         foreach (self::$cachedClasses[$className] as $propName => $info) {
             $fieldName = $info['field'];
-            if (!isset($this->data[$fieldName])) {
+            if (!array_key_exists($fieldName, $this->data)) {
                 continue;
             }
 
