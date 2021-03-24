@@ -12,7 +12,7 @@ use TypeError;
 #[Attribute]
 class IntConverter implements ConverterInterface
 {
-    public function __construct(private array $convertTypes = [])
+    public function __construct(private array $expectTypes = [])
     {
     }
 
@@ -22,10 +22,10 @@ class IntConverter implements ConverterInterface
             return $fieldValue;
         }
 
-        if ($this->convertTypes) {
+        if ($this->expectTypes) {
             [$valueType, $isValueObject] = TypeHelper::getValueType($fieldValue);
-            if (!in_array($valueType, $this->convertTypes) &&
-                (!$isValueObject || !in_array('object', $this->convertTypes))
+            if (!in_array($valueType, $this->expectTypes) &&
+                (!$isValueObject || !in_array('object', $this->expectTypes))
             ) {
                 throw new TypeError('int converter: unexpect type');
             }
