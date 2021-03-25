@@ -11,19 +11,15 @@ use Archman\DataModel\Field;
 
 class PrimitiveModel extends DataModel
 {
-    #[Field('intField')]
-    #[IntConverter(['bool', 'float', 'string'])]
+    #[Field('intField'), IntConverter(['bool', 'float', 'string'])]
     public int $intVal;
 
-    #[Field('floatField')]
-    #[FloatConverter(['bool', 'int', 'string'])]
+    #[Field('floatField'), FloatConverter(['bool', 'int', 'string'])]
     public float $floatVal;
 
-    #[Field('boolField')]
-    #[BoolConverter(['int', 'float'])]
+    #[Field('boolField'), BoolConverter(['int', 'float'])]
     public bool $boolVal;
 
-    #[Field('stringField')]
-    #[StringConverter(['int', 'float'])]
+    #[Field('stringField'), StringConverter(['int', 'float'])]
     public string $stringVal;
 }

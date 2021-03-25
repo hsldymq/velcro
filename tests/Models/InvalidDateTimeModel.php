@@ -8,7 +8,6 @@ use Archman\DataModel\Field;
 
 class InvalidDateTimeModel extends DataModel
 {
-    #[Field('dt')]
-    #[DateTimeConverter(-1)]
+    #[Field('dt'), DateTimeConverter(-1)]
     public \DateTime $dt;
 }
