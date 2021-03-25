@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Archman\DataModel\Converters;
 
-use Archman\DataModel\PropertyType;
+use Archman\DataModel\Property;
 use Attribute;
 
 #[Attribute]
@@ -26,7 +26,7 @@ class DateTimeConverter implements ConverterInterface
         }
     }
 
-    public function convert(mixed $fieldValue, PropertyType $type): \DateTime
+    public function convert(mixed $fieldValue, Property $property): \DateTime
     {
         return match ($this->type) {
             self::TIMESTAMP => new \DateTime("@{$fieldValue}"),

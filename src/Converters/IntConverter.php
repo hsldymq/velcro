@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Archman\DataModel\Converters;
 
-use Archman\DataModel\PropertyType;
+use Archman\DataModel\Property;
 use Archman\DataModel\TypeHelper;
 use Attribute;
 use TypeError;
@@ -16,7 +16,7 @@ class IntConverter implements ConverterInterface
     {
     }
 
-    public function convert(mixed $fieldValue, PropertyType $type): int
+    public function convert(mixed $fieldValue, Property $property): int
     {
         if (is_int($fieldValue)) {
             return $fieldValue;

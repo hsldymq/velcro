@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Archman\DataModel\Converters;
 
-use Archman\DataModel\PropertyType;
+use Archman\DataModel\Property;
 use Archman\DataModel\TypeHelper;
 use Attribute;
 use TypeError;
@@ -16,7 +16,7 @@ class BoolConverter implements ConverterInterface
     {
     }
 
-    public function convert(mixed $fieldValue, PropertyType $type): bool
+    public function convert(mixed $fieldValue, Property $property): bool
     {
         if (is_bool($fieldValue)) {
             return $fieldValue;
