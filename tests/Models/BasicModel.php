@@ -22,6 +22,12 @@ class BasicModel extends DataModel
     #[Field('ee')]
     private array $e;
 
+    #[Field('ff')]
+    public ?int $f;
+
+    #[Field('gg')]
+    public mixed $g;
+
     public function getD(): float
     {
         return $this->d;
