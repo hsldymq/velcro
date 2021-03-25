@@ -6,7 +6,6 @@ use Archman\DataModel\ConversionException;
 use Archman\DataModel\Tests\Models\Foo;
 use Archman\DataModel\Tests\Models\RecursiveModel;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 class RecursiveModelTest extends TestCase
 {
