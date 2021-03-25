@@ -1,5 +1,6 @@
 /.idea/
 /vendor/
 test.php
+phpunit.xml
 composer.lock
 coverage.xml
