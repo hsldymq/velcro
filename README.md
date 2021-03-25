@@ -1,1 +1,2 @@
-# data-model-php
+[![Build Status](https://travis-ci.com/hsldymq/data-model.svg?branch=main)](https://travis-ci.com/hsldymq/data-model)
+[![codecov](https://codecov.io/gh/hsldymq/data-model/branch/main/graph/badge.svg?token=H9S1V7NSIB)](https://codecov.io/gh/hsldymq/data-model)
