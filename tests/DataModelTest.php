@@ -35,6 +35,8 @@ class DataModelTest extends TestCase
             'cc' => false,
             'dd' => 2.5,
             'ee' => ['b' => 'b'],
+            'ff' => null,
+            'gg' => null,
         ]);
         $this->assertSame(3, $data->a);
         $this->assertSame('greeting', $data->b);
