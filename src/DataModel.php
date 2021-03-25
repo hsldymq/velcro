@@ -94,13 +94,11 @@ abstract class DataModel
 
             $value = $this->data[$fieldName];
             /** @var ConverterInterface $converter */
-            $converter = $info['converter'] ?? null;
-            if ($converter) {
+            if ($converter = $info['converter']) {
                 $value = $converter->convert($value, $info['property']);
             }
             /** @var Closure $setter */
-            $setter = $info['setter'] ?? null;
-            if ($setter) {
+            if ($setter = $info['setter']) {
                 $setter->bindTo($this, $this)($value);
             } else {
                 $this->$propName = $value;
