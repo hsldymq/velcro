@@ -2,6 +2,7 @@
 
 namespace Archman\DataModel\Tests;
 
+use Archman\DataModel\ConversionException;
 use Archman\DataModel\Tests\Models\PrimitiveModel;
 use PHPUnit\Framework\TestCase;
 use TypeError;
@@ -35,28 +36,28 @@ class PrimitiveConverterTest extends TestCase
 
     public function testIntConverter_ExpectError()
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(ConversionException::class);
 
         new PrimitiveModel(['intField' => null]);
     }
 
     public function testFloatConverter_ExpectError()
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(ConversionException::class);
 
         new PrimitiveModel(['floatField' => function() {}]);
     }
 
     public function testBoolConverter_ExpectError()
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(ConversionException::class);
 
         new PrimitiveModel(['boolField' => new class(){}]);
     }
 
     public function testStringConverter_ExpectError()
     {
-        $this->expectException(TypeError::class);
+        $this->expectException(ConversionException::class);
 
         new PrimitiveModel(['stringField' => []]);
     }

@@ -2,6 +2,7 @@
 
 namespace Archman\DataModel\Tests;
 
+use Archman\DataModel\ConversionException;
 use Archman\DataModel\Tests\Models\DateTimeModel;
 use Archman\DataModel\Tests\Models\InvalidDateTimeModel;
 use PHPUnit\Framework\TestCase;
@@ -24,14 +25,14 @@ class DateTimeConverterTest extends TestCase
 
     public function testInvalidTimeValue_ExpectError()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(ConversionException::class);
 
         new DateTimeModel(['datetimeStr' => 'dsjfkalsdjflksajfkl0']);
     }
 
     public function testInvalidType_ExpectError()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(ConversionException::class);
 
         new InvalidDateTimeModel(['dt' => 123]);
     }
