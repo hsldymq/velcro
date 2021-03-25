@@ -21,9 +21,6 @@ class DateTimeConverter implements ConverterInterface
 
     public function __construct(private int $type)
     {
-        if (!in_array($this->type, [self::ISO_8601, self::TIMESTAMP, self::TIMESTAMP_MS])) {
-            throw new \InvalidArgumentException('invalid type for DateTimeConverter');
-        }
     }
 
     public function convert(mixed $fieldValue, Property $property): \DateTime
