@@ -14,8 +14,8 @@ abstract class DataModel
      *  [
      *      $className => [                                             // 完整(含命名空间)的类名
      *          $propertyName => [                                      // 定义了Field Attribute的属性
-     *              'propType' => <PropertyType>                        // 属性的类型信息
-     *              'field' => <string>,                                // 数据的字段名
+     *              'property' => <Property>                            // 属性信息
+     *              'dataField' => <string>,                            // 数据的字段名
      *              'converter' => <ConverterInterface>,                // 数据类型转换对象
      *              'setter' => <Closure>,                              // 用于对private属性进行赋值
      *          ],
@@ -24,7 +24,7 @@ abstract class DataModel
      *      ...
      *  ]
      */
-    private static array $cachedClasses = [];
+    private static array $classesInfo = [];
 
     public function __construct(private array $data = [])
     {
@@ -39,14 +39,13 @@ abstract class DataModel
     final protected function assignProps()
     {
         $modelClass = get_class($this);
-        if (isset(self::$cachedClasses[$modelClass])) {
-            $this->cacheAssign($modelClass);
-        } else {
-            $this->reflectAssign($modelClass);
+        if (!isset(self::$classesInfo[$modelClass])) {
+            self::$classesInfo[$modelClass] = $this->parseInfo($modelClass);
         }
+        $this->doAssign($modelClass);
     }
 
-    private function reflectAssign(string $className)
+    private function parseInfo(string $className): array
     {
         $propsInfo = [];
         $obj = new \ReflectionObject($this);
@@ -59,50 +58,36 @@ abstract class DataModel
                 continue;
             }
 
-            $propsInfo[$propName] = [
-                'propType' => new PropertyType($prop->getType(), $className),
-                'field' => $fieldName
+            $info = [
+                'property' => new Property($className, $propName, $prop->getType()),
+                'dataField' => $fieldName,
+                'converter' => null,
+                'setter' => null,
             ];
-
-            /** @var ConverterInterface $converter */
-            $converter = null;
             foreach ($prop->getAttributes() as $each) {
                 if (is_subclass_of($each->getName(), ConverterInterface::class)) {
-                    $propsInfo[$propName]['converter'] = $converter = $each->newInstance();
+                    $info['converter'] = $each->newInstance();
                     break;
                 }
             }
-
-            $setter = null;
             if ($prop->isPrivate()) {
-                $propsInfo[$propName]['setter'] = $setter = (function(string $propName) {
+                $info['setter'] = (function(string $propName) {
                     return function(mixed $value) use ($propName) {
                         $this->$propName = $value;
                     };
                 })($propName);
             }
 
-            if (!array_key_exists($fieldName, $this->data)) {
-                continue;
-            }
-
-            $value = $this->data[$fieldName];
-            if ($converter) {
-                $value = $converter->convert($value, $propsInfo[$propName]['propType']);
-            }
-            if ($setter) {
-                $setter->bindTo($this, $this)($value);
-            } else {
-                $this->$propName = $value;
-            }
+            $propsInfo[$propName] = $info;
         }
-        self::$cachedClasses[$className] = $propsInfo;
+
+        return $propsInfo;
     }
 
-    private function cacheAssign(string $className)
+    private function doAssign(string $className)
     {
-        foreach (self::$cachedClasses[$className] as $propName => $info) {
-            $fieldName = $info['field'];
+        foreach (self::$classesInfo[$className] as $propName => $info) {
+            $fieldName = $info['dataField'];
             if (!array_key_exists($fieldName, $this->data)) {
                 continue;
             }
@@ -111,7 +96,7 @@ abstract class DataModel
             /** @var ConverterInterface $converter */
             $converter = $info['converter'] ?? null;
             if ($converter) {
-                $value = $converter->convert($value, $info['propType']);
+                $value = $converter->convert($value, $info['property']);
             }
             /** @var Closure $setter */
             $setter = $info['setter'] ?? null;
