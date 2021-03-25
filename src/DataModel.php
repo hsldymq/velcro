@@ -6,6 +6,7 @@ namespace Archman\DataModel;
 
 use Archman\DataModel\Converters\ConverterInterface;
 use Closure;
+use Throwable;
 
 abstract class DataModel
 {
@@ -66,7 +67,11 @@ abstract class DataModel
             ];
             foreach ($prop->getAttributes() as $each) {
                 if (is_subclass_of($each->getName(), ConverterInterface::class)) {
-                    $info['converter'] = $each->newInstance();
+                    try {
+                        $info['converter'] = $each->newInstance();
+                    } catch (Throwable $e) {
+                        throw $this->makeConversionException($each->getName(), $e, $info['property']);
+                    }
                     break;
                 }
             }
@@ -95,7 +100,11 @@ abstract class DataModel
             $value = $this->data[$fieldName];
             /** @var ConverterInterface $converter */
             if ($converter = $info['converter']) {
-                $value = $converter->convert($value, $info['property']);
+                try {
+                    $value = $converter->convert($value, $info['property']);
+                } catch (\Throwable $e) {
+                    throw $this->makeConversionException(get_class($converter), $e, $info['property']);
+                }
             }
             /** @var Closure $setter */
             if ($setter = $info['setter']) {
@@ -104,5 +113,14 @@ abstract class DataModel
                 $this->$propName = $value;
             }
         }
+    }
+
+    private function makeConversionException(string $converterClassName, Throwable $e, Property $prop): ConversionException
+    {
+        throw new ConversionException([
+            'className' => $prop->getClassName(),
+            'propertyName' => $prop->getPropertyName(),
+            'converterClassName' => $converterClassName
+        ], "conversion error({$prop->getClassName()}::\${$prop->getPropertyName()}): {$e->getMessage()}", previous: $e);
     }
 }
