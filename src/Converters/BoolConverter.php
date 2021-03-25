@@ -27,7 +27,7 @@ class BoolConverter implements ConverterInterface
             if (!in_array($valueType, $this->expectTypes) &&
                 (!$isValueObject || !in_array('object', $this->expectTypes))
             ) {
-                throw new TypeError("BoolConverter: unexpect type($valueType)");
+                throw new TypeError("unexpect type of the value: {$valueType}");
             }
         }
 

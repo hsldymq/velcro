@@ -20,13 +20,13 @@ class DataModelConverter implements ConverterInterface
     {
         if ($this->modelClass) {
             if (!is_subclass_of($this->modelClass, DataModel::class)) {
-                throw new TypeError("DataModelConverter: {$property->getClassName()}::\${$property->getPropertyName()}, {$this->modelClass} is not a subclass of DataModel");
+                throw new TypeError("{$this->modelClass} is not a subclass of DataModel");
             }
             $dataModelClass = $this->modelClass;
         } else if ($property->isDataModel()) {
             $dataModelClass = $property->getDataModelTypes()[0];
         } else {
-            throw new TypeError("DataModelConverter: the type of {$property->getClassName()}::\${$property->getPropertyName()} is not a subclass of DataModel");
+            throw new TypeError("the type of the property is not a subclass of DataModel");
         }
 
         return new $dataModelClass($fieldValue);
