@@ -6,7 +6,10 @@ namespace Archman\DataModel;
 
 use Archman\DataModel\Converters\ConverterInterface;
 use Archman\DataModel\Exceptions\ConversionException;
+use Archman\DataModel\Exceptions\ReadonlyException;
 use Closure;
+use ReflectionClass;
+use RuntimeException;
 use Throwable;
 
 abstract class DataModel
@@ -15,11 +18,12 @@ abstract class DataModel
      * @var array 缓存的DataModel子类解析信息. 当多次实例化同一个DataModel子类时, 只需要进行一次反射, 避免不必要的性能开销.
      *  [
      *      $className => [                                             // 完整(含命名空间)的类名
-     *          $propertyName => [                                      // 定义了Field Attribute的属性
+     *          $propName => [                                          // 定义了Field Attribute的属性
      *              'property' => <Property>                            // 属性信息
-     *              'dataField' => <string>,                            // 数据的字段名
-     *              'converter' => <ConverterInterface>,                // 数据类型转换对象
-     *              'setter' => <Closure>,                              // 用于对private属性进行赋值
+     *              'fieldName' => <string>,                            // 数据的字段名
+     *              'converter' => <ConverterInterface|null>,           // 数据转换器
+     *              'setter' => <Closure|null>,                         // 用于对private属性进行赋值
+     *              'readonly' => <bool>,                               // 是否是只读
      *          ],
      *          ...
      *      ],
@@ -28,63 +32,115 @@ abstract class DataModel
      */
     private static array $classesInfo = [];
 
+    private string $className;
+
+    private array $readonlyPropsVal = [];
+
     public function __construct(private array $data = [])
     {
         $this->assignProps();
     }
 
-    public function toArray(): array
+    public function getRawData(): array
     {
         return $this->data;
     }
 
-    final protected function assignProps()
+    public function __get(string $name)
     {
-        $modelClass = get_class($this);
-        if (!isset(self::$classesInfo[$modelClass])) {
-            self::$classesInfo[$modelClass] = $this->parseInfo($modelClass);
+        [$value, $exists] = $this->getReadonlyPropValue($name);
+        if ($exists) {
+            return $value;
         }
-        $this->doAssign($modelClass);
+
+        if (!property_exists($this, $name)) {
+            $errStr = "Undefined property: {$this->className}::\${$name}";
+        } else {
+            $errStr = "Cannot access non-public property {$this->className}::\${$name}";
+        }
+        throw new RuntimeException($errStr);
     }
 
-    private function parseInfo(string $className): array
+    public function __set(string $name, mixed $value)
+    {
+        $this->ensurePropIsNotReadonly($name);
+
+        if (property_exists($this, $name)) {
+            throw new RuntimeException("Cannot access non-public property {$this->className}::\${$name}");
+        }
+
+        $this->$name = $value;
+    }
+
+    final protected function assignProps()
+    {
+        $this->className = get_class($this);
+        if (!isset(self::$classesInfo[$this->className])) {
+            self::$classesInfo[$this->className] = $this->parsePropsInfo($this->className);
+        }
+        $this->doAssign($this->className);
+    }
+
+    final protected function getReadonlyPropValue(string $propName): array
+    {
+        if (array_key_exists($propName, $this->readonlyPropsVal)) {
+            return [$this->readonlyPropsVal[$propName], true];
+        }
+
+        return [null, false];
+    }
+
+    final protected function ensurePropIsNotReadonly(string $propName)
+    {
+        if (array_key_exists($propName, $this->readonlyPropsVal)) {
+            throw new ReadonlyException([
+                'className' => $this->className,
+                'propertyName' => $propName,
+            ], "Cannot set readonly property {$this->className}::\${$propName}");
+        }
+    }
+
+    private function parsePropsInfo(string $className): array
     {
         $propsInfo = [];
-        $obj = new \ReflectionObject($this);
+        $obj = new ReflectionClass($className);
         foreach ($obj->getProperties() as $prop) {
             $propName = $prop->getName();
 
-            $attr = $prop->getAttributes(Field::class)[0] ?? null;
-            $fieldName = $attr?->getArguments()[0] ?? null;
-            if (!$fieldName) {
+            $fieldAttr = $prop->getAttributes(Field::class)[0] ?? null;
+            if (!$fieldAttr) {
                 continue;
             }
 
-            $info = [
-                'property' => new Property($className, $propName, $prop->getType()),
-                'dataField' => $fieldName,
+            $property = new Property($prop);
+            $propInfo = [
+                'property' => $property,
+                'fieldName' => $fieldAttr->getArguments()[0],
                 'converter' => null,
                 'setter' => null,
+                'readonly' => false,
             ];
             foreach ($prop->getAttributes() as $each) {
-                if (is_subclass_of($each->getName(), ConverterInterface::class)) {
+                $attrName = $each->getName();
+                if ($attrName === Readonly::class && $property->isPublic()) {
+                    $propInfo['readonly'] = true;
+                } else if (!$propInfo['converter'] && is_subclass_of($attrName, ConverterInterface::class)) {
                     try {
-                        $info['converter'] = $each->newInstance();
+                        $propInfo['converter'] = $each->newInstance();
                     } catch (Throwable $e) {
-                        throw $this->makeConversionException($each->getName(), $e, $info['property']);
+                        throw $this->makeConversionException($each->getName(), $propName, $e);
                     }
-                    break;
                 }
             }
             if ($prop->isPrivate()) {
-                $info['setter'] = (function(string $propName) {
+                $propInfo['setter'] = (function(string $propName) {
                     return function(mixed $value) use ($propName) {
                         $this->$propName = $value;
                     };
                 })($propName);
             }
 
-            $propsInfo[$propName] = $info;
+            $propsInfo[$propName] = $propInfo;
         }
 
         return $propsInfo;
@@ -93,18 +149,20 @@ abstract class DataModel
     private function doAssign(string $className)
     {
         foreach (self::$classesInfo[$className] as $propName => $info) {
-            $fieldName = $info['dataField'];
+            $fieldName = $info['fieldName'];
             if (!array_key_exists($fieldName, $this->data)) {
                 continue;
             }
+            /** @var Property $prop */
+            $prop = $info['property'];
 
             $value = $this->data[$fieldName];
             /** @var ConverterInterface $converter */
             if ($converter = $info['converter']) {
                 try {
-                    $value = $converter->convert($value, $info['property']);
-                } catch (\Throwable $e) {
-                    throw $this->makeConversionException(get_class($converter), $e, $info['property']);
+                    $value = $converter->convert($value, $prop);
+                } catch (Throwable $e) {
+                    throw $this->makeConversionException(get_class($converter), $propName, $e);
                 }
             }
             /** @var Closure $setter */
@@ -113,15 +171,19 @@ abstract class DataModel
             } else {
                 $this->$propName = $value;
             }
+            if ($info['readonly']) {
+                $this->readonlyPropsVal[$propName] = $this->$propName;
+                unset($this->$propName);
+            }
         }
     }
 
-    private function makeConversionException(string $converterClassName, Throwable $e, Property $prop): ConversionException
+    private function makeConversionException(string $converterClassName, string $propName, Throwable $e): ConversionException
     {
         throw new ConversionException([
-            'className' => $prop->getClassName(),
-            'propertyName' => $prop->getPropertyName(),
+            'className' => $this->className,
+            'propertyName' => $propName,
             'converterClassName' => $converterClassName
-        ], "conversion error({$prop->getClassName()}::\${$prop->getPropertyName()}): {$e->getMessage()}", previous: $e);
+        ], "conversion error({$this->className}::\${$propName}): {$e->getMessage()}", previous: $e);
     }
 }
