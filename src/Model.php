@@ -12,7 +12,7 @@ use ReflectionClass;
 use RuntimeException;
 use Throwable;
 
-abstract class DataModel
+abstract class Model
 {
     /**
      * @var array 缓存的DataModel子类解析信息. 当多次实例化同一个DataModel子类时, 只需要进行一次反射, 避免不必要的性能开销.

@@ -3,10 +3,10 @@
 namespace Archman\Velcro\Tests\Models;
 
 use Archman\Velcro\Converters\DataModelConverter;
-use Archman\Velcro\DataModel;
+use Archman\Velcro\Model;
 use Archman\Velcro\Field;
 
-class RecursiveModel extends DataModel
+class RecursiveModel extends Model
 {
     #[Field('floatField')]
     public float $floatValue;
@@ -28,7 +28,7 @@ class RecursiveModel extends DataModel
     public $baz2;
 }
 
-class Foo extends DataModel
+class Foo extends Model
 {
     #[Field('intField')]
     public int $intValue;
@@ -37,7 +37,7 @@ class Foo extends DataModel
     public Bar $bar;
 }
 
-class Bar extends DataModel
+class Bar extends Model
 {
     #[Field('stringField')]
     public string $stringValue;
