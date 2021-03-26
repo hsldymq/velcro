@@ -5,11 +5,11 @@
 ```php
 <?php
 
-use Archman\DataModel\Converters\DataModelConverter;
-use Archman\DataModel\Converters\DateTimeConverter;
-use Archman\DataModel\DataModel;
-use Archman\DataModel\Field;
-use Archman\DataModel\Readonly;
+use Archman\Velcro\Converters\DataModelConverter;
+use Archman\Velcro\Converters\DateTimeConverter;
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Field;
+use Archman\Velcro\Readonly;
  
 class Foo extends DataModel
 {

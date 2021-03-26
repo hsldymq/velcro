@@ -4,22 +4,22 @@ declare(strict_types=1);
 
 namespace Archman\Velcro\Converters;
 
-use Archman\Velcro\Model;
+use Archman\Velcro\DataModel;
 use Archman\Velcro\Property;
 use Attribute;
 use TypeError;
 
 #[Attribute]
-class ModelConverter implements ConverterInterface
+class DataModelConverter implements ConverterInterface
 {
     public function __construct(private string $modelClass = '')
     {
     }
 
-    public function convert(mixed $fieldValue, Property $property): Model
+    public function convert(mixed $fieldValue, Property $property): DataModel
     {
         if ($this->modelClass) {
-            if (!is_subclass_of($this->modelClass, Model::class)) {
+            if (!is_subclass_of($this->modelClass, DataModel::class)) {
                 throw new TypeError("{$this->modelClass} is not a subclass of DataModel");
             }
             $dataModelClass = $this->modelClass;

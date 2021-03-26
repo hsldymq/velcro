@@ -124,7 +124,7 @@ class Property
         }
 
         foreach ($this->declaredTypes as $typeName => $_) {
-            if (is_subclass_of($typeName, Model::class)) {
+            if (is_subclass_of($typeName, DataModel::class)) {
                 $this->dataModelTypes[] = $typeName;
             }
         }
