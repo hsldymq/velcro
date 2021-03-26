@@ -3,7 +3,7 @@
 namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Exceptions\ReadonlyException;
-use Archman\Velcro\Tests\Models\BasicModel;
+use Archman\Velcro\Tests\Models\BasicDataModel;
 use PHPUnit\Framework\TestCase;
 use \RuntimeException;
 
@@ -11,7 +11,7 @@ class DataModelTest extends TestCase
 {
     public function testDataModelFunction()
     {
-        $data = new BasicModel([
+        $data = new BasicDataModel([
             'aa' => 1,
             'ro' => 'hi',
             'dd' => 1.5,
@@ -23,7 +23,7 @@ class DataModelTest extends TestCase
         $this->assertSame(1.5, $data->getD());
         $this->assertEquals(['a' => 'a'], $data->getE());
 
-        $data = new BasicModel([
+        $data = new BasicDataModel([
             'ro' => 'hello',
             'cc' => true,
         ]);
@@ -31,7 +31,7 @@ class DataModelTest extends TestCase
         $this->assertSame('hello', $data->ro);
         $this->assertTrue($data->c);
 
-        $data = new BasicModel([
+        $data = new BasicDataModel([
             'aa' => 3,
             'ro' => 'greeting',
             'cc' => false,
@@ -51,11 +51,11 @@ class DataModelTest extends TestCase
     {
         $this->expectException(ReadonlyException::class);
 
-        $model = new BasicModel(['ro' => 'yes']);
+        $model = new BasicDataModel(['ro' => 'yes']);
         try {
             $model->ro = 'no';
         } catch (ReadonlyException $e) {
-            $this->assertEquals(BasicModel::class, $e->getClassName());
+            $this->assertEquals(BasicDataModel::class, $e->getClassName());
             $this->assertEquals('ro', $e->getPropertyName());
             throw $e;
         }
@@ -65,7 +65,7 @@ class DataModelTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $model = new BasicModel(['ee' => []]);
+        $model = new BasicDataModel(['ee' => []]);
         $model->e = ['eee' => 'eeee'];
     }
 }

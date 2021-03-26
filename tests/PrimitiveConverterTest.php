@@ -3,14 +3,14 @@
 namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Exceptions\ConversionException;
-use Archman\Velcro\Tests\Models\PrimitiveModel;
+use Archman\Velcro\Tests\Models\PrimitiveDataModel;
 use PHPUnit\Framework\TestCase;
 
 class PrimitiveConverterTest extends TestCase
 {
     public function testPrimitiveConverters()
     {
-        $model = new PrimitiveModel([
+        $model = new PrimitiveDataModel([
             'intField' => true,
             'floatField' => '1.5',
             'boolField' => 100,
@@ -21,7 +21,7 @@ class PrimitiveConverterTest extends TestCase
         $this->assertTrue($model->boolVal);
         $this->assertSame('123', $model->stringVal);
 
-        $model = new PrimitiveModel([
+        $model = new PrimitiveDataModel([
             'intField' => 1,
             'floatField' => 1.5,
             'boolField' => true,
@@ -37,27 +37,27 @@ class PrimitiveConverterTest extends TestCase
     {
         $this->expectException(ConversionException::class);
 
-        new PrimitiveModel(['intField' => null]);
+        new PrimitiveDataModel(['intField' => null]);
     }
 
     public function testFloatConverter_ExpectError()
     {
         $this->expectException(ConversionException::class);
 
-        new PrimitiveModel(['floatField' => function() {}]);
+        new PrimitiveDataModel(['floatField' => function() {}]);
     }
 
     public function testBoolConverter_ExpectError()
     {
         $this->expectException(ConversionException::class);
 
-        new PrimitiveModel(['boolField' => new class(){}]);
+        new PrimitiveDataModel(['boolField' => new class(){}]);
     }
 
     public function testStringConverter_ExpectError()
     {
         $this->expectException(ConversionException::class);
 
-        new PrimitiveModel(['stringField' => []]);
+        new PrimitiveDataModel(['stringField' => []]);
     }
 }

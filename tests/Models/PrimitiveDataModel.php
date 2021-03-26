@@ -6,10 +6,10 @@ use Archman\Velcro\Converters\BoolConverter;
 use Archman\Velcro\Converters\FloatConverter;
 use Archman\Velcro\Converters\IntConverter;
 use Archman\Velcro\Converters\StringConverter;
-use Archman\Velcro\Model;
+use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
 
-class PrimitiveModel extends Model
+class PrimitiveDataModel extends DataModel
 {
     #[Field('intField'), IntConverter(['bool', 'float', 'string'])]
     public int $intVal;

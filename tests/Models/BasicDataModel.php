@@ -2,11 +2,11 @@
 
 namespace Archman\Velcro\Tests\Models;
 
-use Archman\Velcro\Model;
+use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
 use Archman\Velcro\Readonly;
 
-class BasicModel extends Model
+class BasicDataModel extends DataModel
 {
     #[Field('aa')]
     public int $a;

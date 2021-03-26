@@ -3,10 +3,10 @@
 namespace Archman\Velcro\Tests\Models;
 
 use Archman\Velcro\Converters\DateTimeConverter;
-use Archman\Velcro\Model;
+use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
 
-class DateTimeModel extends Model
+class DateTimeDataModel extends DataModel
 {
     #[Field('timestamp'), DateTimeConverter(DateTimeConverter::TIMESTAMP)]
     public \DateTime $datetime1;

@@ -3,15 +3,15 @@
 namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Exceptions\ConversionException;
-use Archman\Velcro\Tests\Models\DateTimeModel;
-use Archman\Velcro\Tests\Models\InvalidDateTimeModel;
+use Archman\Velcro\Tests\Models\DateTimeDataModel;
+use Archman\Velcro\Tests\Models\InvalidDateTimeDataModel;
 use PHPUnit\Framework\TestCase;
 
 class DateTimeConverterTest extends TestCase
 {
     public function testDateTimeConverter()
     {
-        $data = new DateTimeModel([
+        $data = new DateTimeDataModel([
             'timestamp' => 1609459200,
             'timestampDecimal' => 1609459200.123,
             'timestampMS' => 1609459200123,
@@ -27,13 +27,13 @@ class DateTimeConverterTest extends TestCase
     {
         $this->expectException(ConversionException::class);
 
-        new DateTimeModel(['datetimeStr' => 'dsjfkalsdjflksajfkl0']);
+        new DateTimeDataModel(['datetimeStr' => 'dsjfkalsdjflksajfkl0']);
     }
 
     public function testInvalidType_ExpectError()
     {
         $this->expectException(ConversionException::class);
 
-        new InvalidDateTimeModel(['dt' => 123]);
+        new InvalidDateTimeDataModel(['dt' => 123]);
     }
 }

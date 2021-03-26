@@ -2,17 +2,17 @@
 
 namespace Archman\Velcro\Tests;
 
-use Archman\Velcro\Converters\ModelConverter;
+use Archman\Velcro\Converters\DataModelConverter;
 use Archman\Velcro\Exceptions\ConversionException;
 use Archman\Velcro\Tests\Models\Foo;
-use Archman\Velcro\Tests\Models\RecursiveModel;
+use Archman\Velcro\Tests\Models\RecursiveDataModel;
 use PHPUnit\Framework\TestCase;
 
 class RecursiveModelTest extends TestCase
 {
     public function testRecursiveDataModel()
     {
-        $model = new RecursiveModel([
+        $model = new RecursiveDataModel([
             'floatField' => 1.5,
             'foo1' => [
                 'intField' => 111,
@@ -49,11 +49,11 @@ class RecursiveModelTest extends TestCase
         $this->expectException(ConversionException::class);
 
         try {
-            new RecursiveModel(['baz1' => []]);
+            new RecursiveDataModel(['baz1' => []]);
         } catch (ConversionException $e) {
-            $this->assertEquals(RecursiveModel::class, $e->getClassName());
+            $this->assertEquals(RecursiveDataModel::class, $e->getClassName());
             $this->assertEquals('baz1', $e->getPropertyName());
-            $this->assertEquals(ModelConverter::class, $e->getConverterClassName());
+            $this->assertEquals(DataModelConverter::class, $e->getConverterClassName());
             throw $e;
         }
     }
@@ -62,6 +62,6 @@ class RecursiveModelTest extends TestCase
     {
         $this->expectException(ConversionException::class);
 
-        new RecursiveModel(['baz2' => []]);
+        new RecursiveDataModel(['baz2' => []]);
     }
 }

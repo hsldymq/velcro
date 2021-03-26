@@ -3,15 +3,15 @@
 namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Property;
-use Archman\Velcro\Tests\Models\BasicModel;
-use Archman\Velcro\Tests\Models\RecursiveModel;
+use Archman\Velcro\Tests\Models\BasicDataModel;
+use Archman\Velcro\Tests\Models\RecursiveDataModel;
 use PHPUnit\Framework\TestCase;
 
 class PropertyTest extends TestCase
 {
     public function testIsNullable()
     {
-        $model = new BasicModel([
+        $model = new BasicDataModel([
             'aa' => 3,
             'bb' => 'greeting',
             'cc' => false,
@@ -37,7 +37,7 @@ class PropertyTest extends TestCase
 
     public function testIsMixed()
     {
-        $model = new BasicModel([
+        $model = new BasicDataModel([
             'aa' => 3,
             'bb' => 'greeting',
             'cc' => false,
@@ -63,7 +63,7 @@ class PropertyTest extends TestCase
 
     public function testIsDataModel()
     {
-        $model = new RecursiveModel([
+        $model = new RecursiveDataModel([
             'floatField' => 1.5,
             'foo1' => [
                 'intField' => 111,
