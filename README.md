@@ -5,7 +5,6 @@
 ```php
 <?php
 
-use Archman\Velcro\Converters\DataModelConverter;
 use Archman\Velcro\Converters\DateTimeConverter;
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
