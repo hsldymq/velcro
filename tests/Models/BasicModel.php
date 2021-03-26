@@ -4,14 +4,18 @@ namespace Archman\DataModel\Tests\Models;
 
 use Archman\DataModel\DataModel;
 use Archman\DataModel\Field;
+use Archman\DataModel\Readonly;
 
 class BasicModel extends DataModel
 {
     #[Field('aa')]
     public int $a;
 
-    #[Field('bb')]
-    public string $b;
+    /**
+     * @var string 只读, 试图修改该属性会抛出异常
+     */
+    #[Field('ro'), Readonly]
+    public string $ro;
 
     #[Field('cc')]
     public bool $c;
@@ -19,7 +23,10 @@ class BasicModel extends DataModel
     #[Field('dd')]
     protected float $d;
 
-    #[Field('ee')]
+    /**
+     * @var array 对非public属性,Readonly会被忽视
+     */
+    #[Field('ee'), Readonly]
     private array $e;
 
     #[Field('ff')]
