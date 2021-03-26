@@ -19,11 +19,11 @@ class Foo extends DataModel
     #[Field('field2'), DateTimeConverter(DateTimeConverter::ISO_8601)]
     public DateTime $val2;
     
-    #[Field('field3'), Readonly]
-    public string $roVal3;
+    #[Field('field3'), DataModelConverter]
+    public Bar $val3;
     
-    #[Field('field4'), DataModelConverter]
-    public Bar $val4;
+    #[Field('field4'), Readonly]
+    public string $roVal4;
 }
 
 class Bar extends DataModel
@@ -35,17 +35,17 @@ class Bar extends DataModel
 $foo = new Foo([
     'field1' => 123,
     'field2' => '2021-01-01T00:00:00',
-    'field3' => 'readonly value',
-    'field4' => [
+    'field3' => [
         'field' => 1.5,
     ],
+    'field4' => 'readonly value',
 ]);
 
 assert($foo->val1 === 123);
 assert($foo->val2->format('Y-m-d H:i:s') === '2021-01-01 00:00:00');
-assert($foo->roVal3 === 'readonly value');
-assert($foo->val4->val === 1.5);
-$foo->roVal3 = 'new value'; // it will throw an exception
+assert($foo->val3->val === 1.5);
+assert($foo->roVal4 === 'readonly value');
+$foo->roVal4 = 'new value'; // it will throw an exception
 ```
 
 # 要求
