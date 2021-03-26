@@ -34,10 +34,11 @@ assert($foo->roVal3 === 'readonly value');
 $foo->roVal3 = 'new value'; // it will throw an exception
 ```
 
-# Requirement
+# 要求
 PHP >= 8.0
 
-# Install
+# 安装
+
 ```bash
 composer require hsldymq/data-model
 ```
