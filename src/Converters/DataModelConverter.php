@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Archman\DataModel\Converters;
+namespace Archman\Velcro\Converters;
 
-use Archman\DataModel\DataModel;
-use Archman\DataModel\Property;
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Property;
 use Attribute;
 use TypeError;
 

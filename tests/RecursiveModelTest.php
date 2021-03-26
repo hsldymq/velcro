@@ -1,11 +1,11 @@
 <?php
 
-namespace Archman\DataModel\Tests;
+namespace Archman\Velcro\Tests;
 
-use Archman\DataModel\Converters\DataModelConverter;
-use Archman\DataModel\Exceptions\ConversionException;
-use Archman\DataModel\Tests\Models\Foo;
-use Archman\DataModel\Tests\Models\RecursiveModel;
+use Archman\Velcro\Converters\DataModelConverter;
+use Archman\Velcro\Exceptions\ConversionException;
+use Archman\Velcro\Tests\Models\Foo;
+use Archman\Velcro\Tests\Models\RecursiveModel;
 use PHPUnit\Framework\TestCase;
 
 class RecursiveModelTest extends TestCase

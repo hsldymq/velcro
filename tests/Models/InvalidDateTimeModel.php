@@ -1,10 +1,10 @@
 <?php
 
-namespace Archman\DataModel\Tests\Models;
+namespace Archman\Velcro\Tests\Models;
 
-use Archman\DataModel\Converters\DateTimeConverter;
-use Archman\DataModel\DataModel;
-use Archman\DataModel\Field;
+use Archman\Velcro\Converters\DateTimeConverter;
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Field;
 
 class InvalidDateTimeModel extends DataModel
 {

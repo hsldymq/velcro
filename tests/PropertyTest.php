@@ -1,10 +1,10 @@
 <?php
 
-namespace Archman\DataModel\Tests;
+namespace Archman\Velcro\Tests;
 
-use Archman\DataModel\Property;
-use Archman\DataModel\Tests\Models\BasicModel;
-use Archman\DataModel\Tests\Models\RecursiveModel;
+use Archman\Velcro\Property;
+use Archman\Velcro\Tests\Models\BasicModel;
+use Archman\Velcro\Tests\Models\RecursiveModel;
 use PHPUnit\Framework\TestCase;
 
 class PropertyTest extends TestCase

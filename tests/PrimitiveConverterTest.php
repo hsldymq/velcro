@@ -1,9 +1,9 @@
 <?php
 
-namespace Archman\DataModel\Tests;
+namespace Archman\Velcro\Tests;
 
-use Archman\DataModel\Exceptions\ConversionException;
-use Archman\DataModel\Tests\Models\PrimitiveModel;
+use Archman\Velcro\Exceptions\ConversionException;
+use Archman\Velcro\Tests\Models\PrimitiveModel;
 use PHPUnit\Framework\TestCase;
 
 class PrimitiveConverterTest extends TestCase

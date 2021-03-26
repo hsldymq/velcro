@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Archman\DataModel;
+namespace Archman\Velcro;
 
-use Archman\DataModel\Converters\ConverterInterface;
-use Archman\DataModel\Exceptions\ConversionException;
-use Archman\DataModel\Exceptions\ReadonlyException;
+use Archman\Velcro\Converters\ConverterInterface;
+use Archman\Velcro\Exceptions\ConversionException;
+use Archman\Velcro\Exceptions\ReadonlyException;
 use Closure;
 use ReflectionClass;
 use RuntimeException;

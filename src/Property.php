@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\DataModel;
+namespace Archman\Velcro;
 
 use ReflectionNamedType;
 use ReflectionProperty;

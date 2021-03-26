@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\DataModel\Exceptions;
+namespace Archman\Velcro\Exceptions;
 
 use Exception;
 use Throwable;

@@ -1,10 +1,10 @@
 <?php
 
-namespace Archman\DataModel\Tests\Models;
+namespace Archman\Velcro\Tests\Models;
 
-use Archman\DataModel\Converters\DataModelConverter;
-use Archman\DataModel\DataModel;
-use Archman\DataModel\Field;
+use Archman\Velcro\Converters\DataModelConverter;
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Field;
 
 class RecursiveModel extends DataModel
 {

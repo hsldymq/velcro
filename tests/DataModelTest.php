@@ -1,9 +1,9 @@
 <?php
 
-namespace Archman\DataModel\Tests;
+namespace Archman\Velcro\Tests;
 
-use Archman\DataModel\Exceptions\ReadonlyException;
-use Archman\DataModel\Tests\Models\BasicModel;
+use Archman\Velcro\Exceptions\ReadonlyException;
+use Archman\Velcro\Tests\Models\BasicModel;
 use PHPUnit\Framework\TestCase;
 use \RuntimeException;
 

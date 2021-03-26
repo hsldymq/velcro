@@ -1,10 +1,10 @@
 <?php
 
-namespace Archman\DataModel\Tests;
+namespace Archman\Velcro\Tests;
 
-use Archman\DataModel\Exceptions\ConversionException;
-use Archman\DataModel\Tests\Models\DateTimeModel;
-use Archman\DataModel\Tests\Models\InvalidDateTimeModel;
+use Archman\Velcro\Exceptions\ConversionException;
+use Archman\Velcro\Tests\Models\DateTimeModel;
+use Archman\Velcro\Tests\Models\InvalidDateTimeModel;
 use PHPUnit\Framework\TestCase;
 
 class DateTimeConverterTest extends TestCase

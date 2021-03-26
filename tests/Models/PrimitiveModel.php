@@ -1,13 +1,13 @@
 <?php
 
-namespace Archman\DataModel\Tests\Models;
+namespace Archman\Velcro\Tests\Models;
 
-use Archman\DataModel\Converters\BoolConverter;
-use Archman\DataModel\Converters\FloatConverter;
-use Archman\DataModel\Converters\IntConverter;
-use Archman\DataModel\Converters\StringConverter;
-use Archman\DataModel\DataModel;
-use Archman\DataModel\Field;
+use Archman\Velcro\Converters\BoolConverter;
+use Archman\Velcro\Converters\FloatConverter;
+use Archman\Velcro\Converters\IntConverter;
+use Archman\Velcro\Converters\StringConverter;
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Field;
 
 class PrimitiveModel extends DataModel
 {

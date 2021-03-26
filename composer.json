@@ -7,12 +7,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Archman\\DataModel\\": "src/"
+            "Archman\\Velcro\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Archman\\DataModel\\Tests\\": "tests/"
+            "Archman\\Velcro\\Tests\\": "tests/"
         }
     },
     "require-dev": {
