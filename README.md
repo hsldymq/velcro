@@ -20,7 +20,7 @@ class Foo extends DataModel
     public DateTime $val2;
 
     #[Field('field3'), Readonly]
-    public string $roVal3;
+    public string $val3;
 }
 
 $foo = new Foo([
@@ -31,8 +31,8 @@ $foo = new Foo([
 
 assert($foo->val1 === 123);
 assert($foo->val2->format('Y-m-d H:i:s') === '2021-01-01 00:00:00');
-assert($foo->roVal3 === 'readonly value');
-$foo->roVal3 = 'new value'; // it will throw an exception
+assert($foo->val3 === 'readonly value');
+$foo->val3 = 'new value'; // it will throw an exception
 ```
 
 # 要求
