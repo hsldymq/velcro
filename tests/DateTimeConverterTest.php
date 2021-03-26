@@ -2,7 +2,7 @@
 
 namespace Archman\DataModel\Tests;
 
-use Archman\DataModel\ConversionException;
+use Archman\DataModel\Exceptions\ConversionException;
 use Archman\DataModel\Tests\Models\DateTimeModel;
 use Archman\DataModel\Tests\Models\InvalidDateTimeModel;
 use PHPUnit\Framework\TestCase;

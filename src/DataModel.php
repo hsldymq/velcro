@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Archman\DataModel;
 
 use Archman\DataModel\Converters\ConverterInterface;
+use Archman\DataModel\Exceptions\ConversionException;
 use Closure;
 use Throwable;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\DataModel;
+namespace Archman\DataModel\Exceptions;
 
 use Exception;
 use Throwable;

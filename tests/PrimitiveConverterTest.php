@@ -2,10 +2,9 @@
 
 namespace Archman\DataModel\Tests;
 
-use Archman\DataModel\ConversionException;
+use Archman\DataModel\Exceptions\ConversionException;
 use Archman\DataModel\Tests\Models\PrimitiveModel;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 
 class PrimitiveConverterTest extends TestCase
 {
