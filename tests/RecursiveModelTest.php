@@ -2,6 +2,7 @@
 
 namespace Archman\DataModel\Tests;
 
+use Archman\DataModel\Converters\DataModelConverter;
 use Archman\DataModel\Exceptions\ConversionException;
 use Archman\DataModel\Tests\Models\Foo;
 use Archman\DataModel\Tests\Models\RecursiveModel;
@@ -47,7 +48,14 @@ class RecursiveModelTest extends TestCase
     {
         $this->expectException(ConversionException::class);
 
-        new RecursiveModel(['baz1' => []]);
+        try {
+            new RecursiveModel(['baz1' => []]);
+        } catch (ConversionException $e) {
+            $this->assertEquals(RecursiveModel::class, $e->getClassName());
+            $this->assertEquals('baz1', $e->getPropertyName());
+            $this->assertEquals(DataModelConverter::class, $e->getConverterClassName());
+            throw $e;
+        }
     }
 
     public function testNonDataModelFieldConversion2_ExpectError()
