@@ -22,11 +22,6 @@ class ConversionException extends Exception
         $this->converterClassName = $context['converterClassName'] ?? '';
     }
 
-    public function getContext(): array
-    {
-        return $this->context;
-    }
-
     public function getClassName(): string
     {
         return $this->className;
