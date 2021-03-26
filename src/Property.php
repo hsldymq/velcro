@@ -5,22 +5,39 @@ declare(strict_types=1);
 namespace Archman\DataModel;
 
 use ReflectionNamedType;
-use ReflectionType;
+use ReflectionProperty;
 use ReflectionUnionType;
 
+/**
+ * @mixin ReflectionProperty
+ */
 class Property
 {
+    public string $class;
+
+    public string $name;
+
     /**
      * @var ReflectionNamedType[]
      */
     private array $namedTypes;
 
+    /**
+     * @var array [ <string> => <bool> ]
+     */
     private array $declaredTypes;
 
+    /**
+     * @var string[]
+     */
     private array $dataModelTypes = [];
 
-    public function __construct(private string $className, private string $propertyName, ?ReflectionType $type)
+    public function __construct(private ReflectionProperty $prop)
     {
+        $this->class = $prop->class;
+        $this->name = $prop->name;
+
+        $type = $this->prop->getType();
         if (!$type) {
             // 没有类型声明即等价于mixed
             $this->namedTypes = [TypeHelper::getMixedType()];
@@ -32,16 +49,6 @@ class Property
             $type instanceof ReflectionNamedType => [$type],
             default => $type->getTypes(),
         };
-    }
-
-    public function getClassName(): string
-    {
-        return $this->className;
-    }
-
-    public function getPropertyName(): string
-    {
-        return $this->propertyName;
     }
 
     /**
@@ -100,6 +107,11 @@ class Property
         return $this->declaredTypes['mixed'] ?? false;
     }
 
+    public function __call(string $name, array $args)
+    {
+        return $this->prop->$name(...$args);
+    }
+
     private function analyze(): void
     {
         if (isset($this->declaredTypes)) {
@@ -108,7 +120,7 @@ class Property
 
         $this->declaredTypes = TypeHelper::parseNamedTypes($this->namedTypes);
         if (isset($this->declaredTypes['self'])) {
-            $this->declaredTypes[$this->className] = true;
+            $this->declaredTypes[$this->class] = true;
         }
 
         foreach ($this->declaredTypes as $typeName => $_) {

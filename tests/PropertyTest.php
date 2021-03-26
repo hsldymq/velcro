@@ -23,15 +23,15 @@ class PropertyTest extends TestCase
         $refl = new \ReflectionObject($model);
 
         $propName = 'a';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertFalse($p->isNullable());
 
         $propName = 'f';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertTrue($p->isNullable());
 
         $propName = 'g';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertTrue($p->isNullable());
     }
 
@@ -49,15 +49,15 @@ class PropertyTest extends TestCase
         $refl = new \ReflectionObject($model);
 
         $propName = 'a';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertFalse($p->isMixed());
 
         $propName = 'f';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertFalse($p->isMixed());
 
         $propName = 'g';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertTrue($p->isMixed());
     }
 
@@ -87,19 +87,19 @@ class PropertyTest extends TestCase
         $refl = new \ReflectionObject($model);
 
         $propName = 'floatValue';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertFalse($p->isDataModel());
 
         $propName = 'foo1';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertTrue($p->isDataModel());
 
         $propName = 'foo2';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertFalse($p->isDataModel());
 
         $propName = 'foo3';
-        $p = new Property(BasicModel::class, $propName, $refl->getProperty($propName)->getType());
+        $p = new Property($refl->getProperty($propName));
         $this->assertTrue($p->isDataModel());
     }
 }
