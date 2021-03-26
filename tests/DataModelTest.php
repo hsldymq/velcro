@@ -47,6 +47,13 @@ class DataModelTest extends TestCase
         $this->assertEquals(['b' => 'b'], $data->getE());
     }
 
+    public function testSetUndefinedProp()
+    {
+        $model = new BasicDataModel([]);
+        $model->ggggg = 1;
+        $this->assertSame(1, $model->ggggg);
+    }
+
     public function testSetReadonlyProp_ExpectError()
     {
         $this->expectException(ReadonlyException::class);
@@ -67,5 +74,21 @@ class DataModelTest extends TestCase
 
         $model = new BasicDataModel(['ee' => []]);
         $model->e = ['eee' => 'eeee'];
+    }
+
+    public function testGetUndefinedProp_ExpectError()
+    {
+        $this->expectException(RuntimeException::class);
+
+        $model = new BasicDataModel([]);
+        $_ = $model->vvvvv;
+    }
+
+    public function testGetNonPublicProp_ExpectError()
+    {
+        $this->expectException(RuntimeException::class);
+
+        $model = new BasicDataModel(['dd' => 1.5]);
+        $_ = $model->d;
     }
 }
