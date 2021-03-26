@@ -19,7 +19,7 @@ class RecursiveModel extends DataModel
     public $foo2;
 
     #[Field('foo3'), DataModelConverter(Foo::class)]
-    public Foo|Bar $foo3;
+    public false|Foo|Bar $foo3;
 
     #[Field('baz1'), DataModelConverter]
     public Baz $baz1;
