@@ -40,5 +40,5 @@ PHP >= 8.0
 # 安装
 
 ```bash
-composer require hsldymq/data-model
+composer require hsldymq/velcro
 ```
