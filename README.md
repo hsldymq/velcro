@@ -2,6 +2,8 @@
 [![Build Status](https://travis-ci.com/hsldymq/velcro.svg?branch=main)](https://travis-ci.com/hsldymq/velcro)
 [![codecov](https://codecov.io/gh/hsldymq/velcro/branch/main/graph/badge.svg?token=73StDTfHBx)](https://codecov.io/gh/hsldymq/velcro)
 
+更便捷的将数组中数据附给对象属性
+
 ```php
 <?php
 
