@@ -13,9 +13,9 @@ class ConversionException extends Exception
     private string $propertyName;
     private string $converterClassName;
 
-    public function __construct(private array $context = [], $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(private Throwable $rootCause, private array $context = [], $message = "", $code = 0)
     {
-        parent::__construct($message, $code, $previous);
+        parent::__construct($message, $code, $rootCause);
 
         $this->className = $context['className'] ?? '';
         $this->propertyName = $context['propertyName'] ?? '';
@@ -35,5 +35,10 @@ class ConversionException extends Exception
     public function getConverterClassName(): string
     {
         return $this->converterClassName;
+    }
+
+    public function getRootCause(): Throwable
+    {
+        return $this->rootCause;
     }
 }

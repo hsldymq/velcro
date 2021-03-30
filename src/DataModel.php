@@ -181,10 +181,10 @@ abstract class DataModel
 
     private function makeConversionException(string $converterClassName, string $propName, Throwable $e): ConversionException
     {
-        throw new ConversionException([
+        throw new ConversionException($e, [
             'className' => $this->className,
             'propertyName' => $propName,
             'converterClassName' => $converterClassName
-        ], "conversion error({$this->className}::\${$propName}): {$e->getMessage()}", previous: $e);
+        ], "conversion error({$this->className}::\${$propName}): {$e->getMessage()}");
     }
 }
