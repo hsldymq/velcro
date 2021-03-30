@@ -63,7 +63,7 @@ composer require hsldymq/velcro
 
 # 使用
 
-## 基础使用
+## 基本用法
 这里展示一个最基本的用法.
 ```php
 <?php
