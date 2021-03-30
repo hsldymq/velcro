@@ -2,9 +2,12 @@
 
 namespace Archman\Velcro\Tests;
 
+use Archman\Velcro\Converters\ModelListConverter;
 use Archman\Velcro\Exceptions\ConversionException;
 use Archman\Velcro\Tests\Models\EmbedDataListModel;
+use Archman\Velcro\Tests\Models\Outer;
 use PHPUnit\Framework\TestCase;
+use TypeError;
 
 class ModelConverterTest extends TestCase
 {
@@ -48,8 +51,19 @@ class ModelConverterTest extends TestCase
 
     public function testInvalidElementType_ExpectError()
     {
-        $this->expectException(ConversionException::class);
-
-        new EmbedDataListModel(['outers' => [['inners' => ['test']]]]);
+        try {
+            new EmbedDataListModel([
+                'outers' => [
+                    [
+                        'inners' => ['test']
+                    ]
+                ]
+            ]);
+        } catch (ConversionException $e) {
+            $this->assertEquals(Outer::class, $e->getClassName());
+            $this->assertEquals('innerList', $e->getPropertyName());
+            $this->assertEquals(ModelListConverter::class, $e->getConverterClassName());
+            $this->assertEquals(TypeError::class, $e->getRootCause()::class);
+        }
     }
 }
