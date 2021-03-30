@@ -6,7 +6,7 @@ use Archman\Velcro\Converters\ModelConverter;
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
 
-class RecursiveDataModel extends DataModel
+class EmbedDataModel extends DataModel
 {
     #[Field('floatField')]
     public float $floatValue;

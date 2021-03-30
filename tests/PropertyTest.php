@@ -4,7 +4,7 @@ namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Property;
 use Archman\Velcro\Tests\Models\BasicDataModel;
-use Archman\Velcro\Tests\Models\RecursiveDataModel;
+use Archman\Velcro\Tests\Models\EmbedDataModel;
 use PHPUnit\Framework\TestCase;
 
 class PropertyTest extends TestCase
@@ -63,7 +63,7 @@ class PropertyTest extends TestCase
 
     public function testIsDataModel()
     {
-        $model = new RecursiveDataModel([
+        $model = new EmbedDataModel([
             'floatField' => 1.5,
             'foo1' => [
                 'intField' => 111,
