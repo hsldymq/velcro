@@ -104,6 +104,8 @@ abstract class DataModel
     {
         $propsInfo = [];
         $obj = new ReflectionClass($className);
+        $classReadonly = ($obj->getAttributes(Readonly::class)[0] ?? null) !== null;
+
         foreach ($obj->getProperties() as $prop) {
             $propName = $prop->getName();
 
@@ -119,13 +121,13 @@ abstract class DataModel
                 'fieldName' => $fieldName,
                 'converter' => null,
                 'setter' => null,
-                'readonly' => false,
+                'readonly' => $classReadonly,
             ];
             foreach ($prop->getAttributes() as $each) {
                 $attrName = $each->getName();
                 if ($attrName === Readonly::class && $property->isPublic()) {
                     $propInfo['readonly'] = true;
-                } else if (!$propInfo['converter'] && is_subclass_of($attrName, ConverterInterface::class)) {
+                } else if (is_subclass_of($attrName, ConverterInterface::class) && !$propInfo['converter']) {
                     try {
                         $propInfo['converter'] = $each->newInstance();
                     } catch (Throwable $e) {
