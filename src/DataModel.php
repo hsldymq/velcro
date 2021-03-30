@@ -112,10 +112,11 @@ abstract class DataModel
                 continue;
             }
 
-            $property = new Property($prop);
+            $fieldName = $fieldAttr->getArguments()[0];
+            $property = new Property($prop, $fieldName);
             $propInfo = [
                 'property' => $property,
-                'fieldName' => $fieldAttr->getArguments()[0],
+                'fieldName' => $fieldName,
                 'converter' => null,
                 'setter' => null,
                 'readonly' => false,

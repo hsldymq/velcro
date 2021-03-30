@@ -32,7 +32,7 @@ class Property
      */
     private array $dataModelTypes = [];
 
-    public function __construct(private ReflectionProperty $prop)
+    public function __construct(private ReflectionProperty $prop, private string $boundFieldName)
     {
         $this->class = $prop->class;
         $this->name = $prop->name;
@@ -69,6 +69,11 @@ class Property
         }
 
         return false;
+    }
+
+    public function getBoundFieldName(): string
+    {
+        return $this->boundFieldName;
     }
 
     /**
