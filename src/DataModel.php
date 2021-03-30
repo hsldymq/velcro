@@ -183,6 +183,10 @@ abstract class DataModel
 
     private function makeConversionException(string $converterClassName, string $propName, Throwable $e): ConversionException
     {
+        if ($e instanceof ConversionException) {
+            return $e;
+        }
+
         throw new ConversionException($e, [
             'className' => $this->className,
             'propertyName' => $propName,
