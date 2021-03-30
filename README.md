@@ -84,9 +84,9 @@ doSomething($foo->bar);
 
 你至少需要用到两个类, `\Archman\Velcro\DataModel` 和 `\Archman\Velcro\Field`
 
-前者作为基类被你的类继承, 后者利用PHP 8 Attribute特性,用来关联你的类属性与其对应数组键名. 
+前者作为基类被你的数据模型类继承, 后者利用PHP 8 Attribute特性,用来关联你的类属性与其对应数组键名. 
 
-简短的几句声明之后,你就可以把数组作为构造参数传给Foo构造函数了,实际上Foo内部在帮你做了类似于这样的事:
+简短的几句声明之后,你就可以把数组作为构造参数传给Foo构造函数了,Foo内部在帮你做了类似这样的事情:
 
 ```php
 <?php
