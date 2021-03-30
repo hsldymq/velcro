@@ -10,7 +10,7 @@ use Attribute;
 use TypeError;
 
 #[Attribute]
-class DataModelConverter implements ConverterInterface
+class ModelConverter implements ConverterInterface
 {
     public function __construct(private string $modelClass = '')
     {

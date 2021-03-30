@@ -2,7 +2,7 @@
 
 namespace Archman\Velcro\Tests;
 
-use Archman\Velcro\Converters\DataModelConverter;
+use Archman\Velcro\Converters\ModelConverter;
 use Archman\Velcro\Exceptions\ConversionException;
 use Archman\Velcro\Tests\Models\Foo;
 use Archman\Velcro\Tests\Models\RecursiveDataModel;
@@ -53,7 +53,7 @@ class RecursiveModelTest extends TestCase
         } catch (ConversionException $e) {
             $this->assertEquals(RecursiveDataModel::class, $e->getClassName());
             $this->assertEquals('baz1', $e->getPropertyName());
-            $this->assertEquals(DataModelConverter::class, $e->getConverterClassName());
+            $this->assertEquals(ModelConverter::class, $e->getConverterClassName());
             throw $e;
         }
     }
