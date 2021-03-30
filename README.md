@@ -163,7 +163,7 @@ $data = [
     ],
 ];
 
-// 你对users和school各自建立数据模型
+// 你对students和school各自建立数据模型
 
 class Info extends DataModel
 {
