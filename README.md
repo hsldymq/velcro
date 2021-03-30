@@ -135,7 +135,7 @@ Velcro会先使用`DateTimeConverter`帮你把时间戳转换成DateTime类型�
 Velcro中预先定义了少量的转换器,用来应对不同的场景.
 
 ### 嵌套DataModel
-你可以使用`ModelConverter`和`ModelListConverter`这两个转换器,实现数据模型的嵌套嵌套.
+你可以使用`ModelConverter`和`ModelListConverter`这两个转换器,实现数据模型的嵌套.
 
 ```php
 <?php
