@@ -63,7 +63,7 @@ abstract class DataModel
 
     public function __set(string $name, mixed $value)
     {
-        $this->ensurePropIsNotReadonly($name);
+        $this->ensurePropWritable($name);
 
         if (property_exists($this, $name)) {
             throw new RuntimeException("Cannot access non-public property {$this->className}::\${$name}");
@@ -90,7 +90,7 @@ abstract class DataModel
         return [null, false];
     }
 
-    final protected function ensurePropIsNotReadonly(string $propName)
+    final protected function ensurePropWritable(string $propName)
     {
         if (array_key_exists($propName, $this->readonlyPropsVal)) {
             throw new ReadonlyException([
