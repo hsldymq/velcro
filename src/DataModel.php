@@ -32,9 +32,9 @@ abstract class DataModel
      */
     private static array $classesInfo = [];
 
-    private string $className;
-
     private array $readonlyPropsVal = [];
+
+    private string $className;
 
     public function __construct(private array $data = [])
     {
@@ -54,9 +54,9 @@ abstract class DataModel
         }
 
         if (!property_exists($this, $name)) {
-            $errStr = "Undefined property: {$this->className}::\${$name}";
+            $errStr = "Undefined property: {$this->getClassName()}::\${$name}";
         } else {
-            $errStr = "Cannot access non-public property {$this->className}::\${$name}";
+            $errStr = "Cannot access non-public property {$this->getClassName()}::\${$name}";
         }
         throw new RuntimeException($errStr);
     }
@@ -66,7 +66,7 @@ abstract class DataModel
         $this->ensurePropWritable($name);
 
         if (property_exists($this, $name)) {
-            throw new RuntimeException("Cannot access non-public property {$this->className}::\${$name}");
+            throw new RuntimeException("Cannot access non-public property {$this->getClassName()}::\${$name}");
         }
 
         $this->$name = $value;
@@ -74,11 +74,11 @@ abstract class DataModel
 
     final protected function assignProps()
     {
-        $this->className = get_class($this);
-        if (!isset(self::$classesInfo[$this->className])) {
-            self::$classesInfo[$this->className] = $this->parsePropsInfo($this->className);
+        $className = $this->getClassName();
+        if (!isset(self::$classesInfo[$className])) {
+            self::$classesInfo[$className] = $this->parsePropsInfo($className);
         }
-        $this->doAssign($this->className);
+        $this->doAssign();
     }
 
     final protected function getReadonlyPropValue(string $propName): array
@@ -93,11 +93,17 @@ abstract class DataModel
     final protected function ensurePropWritable(string $propName)
     {
         if (array_key_exists($propName, $this->readonlyPropsVal)) {
+            $className = $this->getClassName();
             throw new ReadonlyException([
-                'className' => $this->className,
+                'className' => $className,
                 'propertyName' => $propName,
-            ], "Cannot set readonly property {$this->className}::\${$propName}");
+            ], "Cannot set readonly property {$className}::\${$propName}");
         }
+    }
+
+    final protected function getPropsInfo(): array
+    {
+        return self::$classesInfo[$this->getClassName()];
     }
 
     private function parsePropsInfo(string $className): array
@@ -149,9 +155,9 @@ abstract class DataModel
         return $propsInfo;
     }
 
-    private function doAssign(string $className)
+    private function doAssign()
     {
-        foreach (self::$classesInfo[$className] as $propName => $info) {
+        foreach ($this->getPropsInfo() as $propName => $info) {
             $fieldName = $info['fieldName'];
             if (!array_key_exists($fieldName, $this->data)) {
                 continue;
@@ -181,16 +187,26 @@ abstract class DataModel
         }
     }
 
+    private function getClassName(): string
+    {
+        if (!isset($this->className)) {
+            $this->className = get_class($this);
+        }
+
+        return $this->className;
+    }
+
     private function makeConversionException(string $converterClassName, string $propName, Throwable $e): ConversionException
     {
         if ($e instanceof ConversionException) {
             return $e;
         }
 
+        $className = $this->getClassName();
         throw new ConversionException($e, [
-            'className' => $this->className,
+            'className' => $className,
             'propertyName' => $propName,
             'converterClassName' => $converterClassName
-        ], "conversion error({$this->className}::\${$propName}): {$e->getMessage()}");
+        ], "conversion error({$className}::\${$propName}): {$e->getMessage()}");
     }
 }
