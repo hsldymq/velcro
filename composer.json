@@ -1,6 +1,13 @@
 {
     "name": "hsldymq/velcro",
     "description": "",
+    "homepage": "https://github.com/hsldymq/velcro",
+    "authors": [
+        {
+            "name": "Long Haibin",
+            "email": "hsldymq@qq.com"
+        }
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.0"
