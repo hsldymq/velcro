@@ -269,3 +269,34 @@ try {
 
 $c->config3 = 'xxx'; // 没有标记Field, 不会抛出异常
 ```
+
+## 私有属性
+在上面的例子中,都是使用public属性进行演示. 但实际上Velcro同样能赋值给protected和private属性
+
+```php
+<?php
+
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Field;
+
+// 将属性标记Readonly, 使得指定属性变为只读
+class Foo extends DataModel
+{
+    #[Field('field1')]
+    protected int $val1;
+    
+    #[Field('field2')]
+    private int $val2;
+    
+    public function assertProps(int $v1, int $v2)
+    {
+        assert($this->val1 === $v1);
+        assert($this->val2 === $v2);
+    }
+}
+
+$foo = new Foo(['field1' => 1, 'field2' => 2]);
+$foo->assertProps(1, 2);
+
+```
+
