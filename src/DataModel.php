@@ -207,6 +207,6 @@ abstract class DataModel
             'className' => $className,
             'propertyName' => $propName,
             'converterClassName' => $converterClassName
-        ], "conversion error({$className}::\${$propName}): {$e->getMessage()}");
+        ], "{$className}::\${$propName}, Converter error({$converterClassName}): {$e->getMessage()}");
     }
 }
