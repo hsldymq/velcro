@@ -279,7 +279,7 @@ $c->config3 = 'xxx'; // 没有标记Field, 不会抛出异常
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
 
-// 将属性标记Readonly, 使得指定属性变为只读
+// 该类拥有一个protected属性和一个private属性
 class Foo extends DataModel
 {
     #[Field('field1')]
