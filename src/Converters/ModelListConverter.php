@@ -26,12 +26,12 @@ class ModelListConverter implements ConverterInterface
         }
 
         $result = [];
-        foreach ($fieldValue as $each) {
+        foreach ($fieldValue as $key => $each) {
             if (!is_array($each)) {
                 throw new TypeError("the element of {$property->getBoundFieldName()} should be a type of array");
             }
 
-            $result[] = new $this->modelClass($each);
+            $result[$key] = new $this->modelClass($each);
         }
 
         return $result;

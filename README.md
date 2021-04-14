@@ -152,7 +152,7 @@ $data = [
           "name" => "Alice",
           "age" => 8,
         ],
-        [
+        's' => [
           "name" => "Bob",
           "age" => 10,
         ]
@@ -199,6 +199,7 @@ $info = new Info($data);
 
 assert(count($info->studentList) === 2);
 assert($info->studentList[0]->name === 'Alice');
+assert($info->studentList['s']->name === 'Bob');
 assert($info->school->name === 'xxx');
 ```
 

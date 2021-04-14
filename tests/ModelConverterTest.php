@@ -26,7 +26,7 @@ class ModelConverterTest extends TestCase
                         ['field' => 3],
                         ['field' => 4],
                     ],
-                ]
+                ],
             ],
         ]);
 
@@ -39,6 +39,33 @@ class ModelConverterTest extends TestCase
         $this->assertCount(2, $model->outerList[1]->innerList);
         $this->assertEquals(3, $model->outerList[1]->innerList[0]->val);
         $this->assertEquals(4, $model->outerList[1]->innerList[1]->val);
+
+
+        $model = new EmbedDataListModel([
+            'outers' => [
+                'outer1' => [
+                    'inners' => [
+                        'inner1_a' => ['field' => 1],
+                        'inner1_b' => ['field' => 2],
+                    ],
+                ],
+                'outer2' => [
+                    'inners' => [
+                        'inner2_a' => ['field' => 3],
+                        'inner2_b' => ['field' => 4],
+                    ],
+                ],
+            ],
+        ]);
+        $this->assertCount(2, $model->outerList);
+
+        $this->assertCount(2, $model->outerList['outer1']->innerList);
+        $this->assertEquals(1, $model->outerList['outer1']->innerList['inner1_a']->val);
+        $this->assertEquals(2, $model->outerList['outer1']->innerList['inner1_b']->val);
+
+        $this->assertCount(2, $model->outerList['outer2']->innerList);
+        $this->assertEquals(3, $model->outerList['outer2']->innerList['inner2_a']->val);
+        $this->assertEquals(4, $model->outerList['outer2']->innerList['inner2_b']->val);
 
     }
 
