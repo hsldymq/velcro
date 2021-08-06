@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Archman\Velcro\Tests\Models;
 
 use Archman\Velcro\Converters\ModelConverter;
