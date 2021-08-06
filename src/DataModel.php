@@ -114,7 +114,7 @@ abstract class DataModel
                 continue;
             }
 
-            $fieldName = $fieldAttr->getArguments()[0];
+            $fieldName = $fieldAttr->newInstance()->getFieldName();
             $property = new Property($prop, $fieldName);
             $propInfo = [
                 'property' => $property,
