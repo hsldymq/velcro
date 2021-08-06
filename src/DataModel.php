@@ -34,11 +34,30 @@ abstract class DataModel
 
     private array $readonlyPropsVal = [];
 
+    private array $signedFieldNames = [];
+
     private string $className;
 
     public function __construct(private array $data = [])
     {
         $this->assignProps();
+    }
+
+    /**
+     * 返回未分配给属性的数据字段名列表.
+     *
+     * @return array
+     */
+    public function getUnsignedFieldNames(): array
+    {
+        $data = $this->getRawData();
+        foreach ($this->signedFieldNames as $eachField) {
+            if (array_key_exists($eachField, $this->data)) {
+                unset($data[$eachField]);
+            }
+        }
+
+        return array_keys($data);
     }
 
     public function getRawData(): array
@@ -184,6 +203,7 @@ abstract class DataModel
                 $this->readonlyPropsVal[$propName] = $this->$propName;
                 unset($this->$propName);
             }
+            $this->signedFieldNames[] = $fieldName;
         }
     }
 

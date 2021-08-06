@@ -70,6 +70,47 @@ class DataModelTest extends TestCase
         }
     }
 
+    public function testGetUnsignedFieldNames()
+    {
+        $d1 = new BasicDataModel([
+            'aa' => 3,
+            'ro' => 'greeting',
+            'cc' => false,
+            'dd' => 2.5,
+            'ee' => ['b' => 'b'],
+            'ff' => null,
+            'gg' => null,
+        ]);
+        $this->assertEmpty($d1->getUnsignedFieldNames());
+
+        $d2 = new BasicDataModel([
+            'aa' => 3,
+            'ro' => 'greeting',
+            'cc' => false,
+            'dd' => 2.5,
+            'ee' => ['b' => 'b'],
+            'ff' => 1,
+            'gg' => 1,
+            'xxxxx' => 123,
+            'ggggg' => 456,
+        ]);
+        $this->assertEquals(['xxxxx', 'ggggg'], $d2->getUnsignedFieldNames());
+
+        $d3 = new BasicDataModel([
+            'aa' => 3,
+            'hhhhh' => null,
+            'yyyyy' => 123,
+        ]);
+        $this->assertEquals(['hhhhh', 'yyyyy'], $d3->getUnsignedFieldNames());
+
+        $d4 = new BasicDataModel([
+            'bbbbb' => false,
+            'zzzzz' => 123,
+            'iiiii' => null,
+        ]);
+        $this->assertEquals(['bbbbb', 'zzzzz', 'iiiii'], $d4->getUnsignedFieldNames());
+    }
+
     public function testSetPrivateProp_ExpectError()
     {
         $this->expectException(RuntimeException::class);
