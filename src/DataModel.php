@@ -187,10 +187,10 @@ abstract class DataModel
             return $e;
         }
 
-        throw new ConversionException($e, [
+        throw new ConversionException([
             'className' => $this->className,
             'propertyName' => $propName,
             'converterClassName' => $converterClassName
-        ], "conversion error({$this->className}::\${$propName}): {$e->getMessage()}");
+        ], "conversion error({$this->className}::\${$propName}): {$e->getMessage()}", 0, $e);
     }
 }
