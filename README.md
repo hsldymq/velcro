@@ -43,10 +43,10 @@ PHP现在有了type hinting, 有typed properties,有了union types，再配合st
 
 现在会写成这样`doSomething($foo->bar)`
 
-那么：
-1. 解释器就可能更早的抛出类型相关的错误
-2. 我能更从容的重构代码
-3. 使用静态分析器时或许能发现更多潜在问题
+这样：
+* 我在重构这部分代码时更容易
+* 这些类型错误可以更早的暴露出来
+* 静态分析器也可以帮助我提前发现一些问题
 
 所以当我真正要做这件事的时候，我就需要把关联数组中的数据一个个地赋给对象的属性，极其枯燥且易错.
 
@@ -152,7 +152,7 @@ $data = [
           "name" => "Alice",
           "age" => 8,
         ],
-        [
+        's' => [
           "name" => "Bob",
           "age" => 10,
         ]
@@ -199,6 +199,7 @@ $info = new Info($data);
 
 assert(count($info->studentList) === 2);
 assert($info->studentList[0]->name === 'Alice');
+assert($info->studentList['s']->name === 'Bob');
 assert($info->school->name === 'xxx');
 ```
 
@@ -269,3 +270,34 @@ try {
 
 $c->config3 = 'xxx'; // 没有标记Field, 不会抛出异常
 ```
+
+## 私有属性
+在上面的例子中,都是使用public属性进行演示. 但实际上Velcro同样能赋值给protected和private属性
+
+```php
+<?php
+
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Field;
+
+// 该类拥有一个protected属性和一个private属性
+class Foo extends DataModel
+{
+    #[Field('field1')]
+    protected int $val1;
+    
+    #[Field('field2')]
+    private int $val2;
+    
+    public function assertProps(int $v1, int $v2)
+    {
+        assert($this->val1 === $v1);
+        assert($this->val2 === $v2);
+    }
+}
+
+$foo = new Foo(['field1' => 1, 'field2' => 2]);
+$foo->assertProps(1, 2);
+
+```
+
