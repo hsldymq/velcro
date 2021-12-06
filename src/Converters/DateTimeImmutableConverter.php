@@ -8,7 +8,7 @@ use Archman\Velcro\Property;
 use Attribute;
 
 #[Attribute]
-class DateTimeConverter implements ConverterInterface
+class DateTimeImmutableConverter implements ConverterInterface
 {
     /** @var int ISO-8601 格式 */
     const ISO_8601 = 0;
@@ -30,12 +30,12 @@ class DateTimeConverter implements ConverterInterface
         $this->boundProperty = $property;
     }
 
-    public function convert(mixed $fieldValue): \DateTime
+    public function convert(mixed $fieldValue): \DateTimeImmutable
     {
         return match ($this->type) {
-            self::TIMESTAMP => new \DateTime("@{$fieldValue}"),
-            self::TIMESTAMP_MS => new \DateTime("@".($fieldValue / 1000)),
-            default => new \DateTime($fieldValue),
+            self::TIMESTAMP => new \DateTimeImmutable("@{$fieldValue}"),
+            self::TIMESTAMP_MS => new \DateTimeImmutable("@".($fieldValue / 1000)),
+            default => new \DateTimeImmutable($fieldValue),
         };
     }
 }
