@@ -7,6 +7,11 @@ namespace Archman\Velcro\Converters;
 use Archman\Velcro\Property;
 use Attribute;
 
+/**
+ * 这个Converter用于从整型和字符串恢复为回退枚举(backed enumerations).
+ *
+ * @see https://www.php.net/manual/en/language.enumerations.backed.php
+ */
 #[Attribute]
 class BackedEnumConverter implements ConverterInterface
 {
