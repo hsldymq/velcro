@@ -23,7 +23,7 @@ abstract class DataModel
      *              'fieldName' => <string>,                            // 数据的字段名
      *              'converter' => <ConverterInterface|null>,           // 数据转换器
      *              'setter' => <Closure|null>,                         // 用于对private属性进行赋值
-     *              'readonly' => <bool>,                               // 是否是只读
+     *              'legacyReadonly' => <bool>,                         // 是否是只读 (8.0或8.1以上没标记readonly关键字的情况下设置)
      *          ],
      *          ...
      *      ],
@@ -129,16 +129,18 @@ abstract class DataModel
     {
         $propsInfo = [];
         $obj = new ReflectionClass($className);
-        $classReadonly = ($obj->getAttributes(Readonly::class)[0] ?? null) !== null;
+        $hasClassReadonlyAttr = ($obj->getAttributes(RO::class)[0] ?? null) !== null;
 
         foreach ($obj->getProperties() as $prop) {
             $propName = $prop->getName();
+            $isReadOnlyProp = version_compare(PHP_VERSION, '8.1.0', '>=') ? $prop->isReadOnly() : false;
 
             $fieldAttr = $prop->getAttributes(Field::class)[0] ?? null;
             if (!$fieldAttr) {
                 continue;
             }
 
+            $legacyReadonly = $hasClassReadonlyAttr;
             $fieldName = $fieldAttr->newInstance()->getFieldName();
             $property = new Property($prop, $fieldName);
             $propInfo = [
@@ -146,12 +148,12 @@ abstract class DataModel
                 'fieldName' => $fieldName,
                 'converter' => null,
                 'setter' => null,
-                'readonly' => $classReadonly,
+                'legacyReadonly' => false,
             ];
             foreach ($prop->getAttributes() as $each) {
                 $attrName = $each->getName();
-                if ($attrName === Readonly::class && $property->isPublic()) {
-                    $propInfo['readonly'] = true;
+                if ($attrName === RO::class && $property->isPublic()) {
+                    $legacyReadonly = true;
                 } else if (is_subclass_of($attrName, ConverterInterface::class) && !$propInfo['converter']) {
                     try {
                         $propInfo['converter'] = $each->newInstance();
@@ -160,13 +162,17 @@ abstract class DataModel
                     }
                 }
             }
-            if ($prop->isPrivate()) {
+            if ($prop->isPrivate() || $isReadOnlyProp) {
                 $propInfo['setter'] = (function(string $propName) {
                     return function(mixed $value) use ($propName) {
                         $this->$propName = $value;
                     };
                 })($propName);
             }
+            if ($legacyReadonly && $isReadOnlyProp) {
+                $legacyReadonly = false;
+            }
+            $propInfo['legacyReadonly'] = $legacyReadonly;
 
             $propsInfo[$propName] = $propInfo;
         }
@@ -199,7 +205,7 @@ abstract class DataModel
             } else {
                 $this->$propName = $value;
             }
-            if ($info['readonly']) {
+            if ($info['legacyReadonly']) {
                 $this->readonlyPropsVal[$propName] = $this->$propName;
                 unset($this->$propName);
             }

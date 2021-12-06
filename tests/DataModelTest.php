@@ -28,17 +28,19 @@ class DataModelTest extends TestCase
         $data = new BasicDataModel([
             'ro' => 'hello',
             'cc' => true,
+            'ee' => ['e' => 'e'],
         ]);
         $this->assertFalse(isset($data->a));
         $this->assertSame('hello', $data->ro);
         $this->assertTrue($data->c);
+        $this->assertEquals(['e' => 'e'], $data->getE());
 
         $data = new BasicDataModel([
             'aa' => 3,
             'ro' => 'greeting',
             'cc' => false,
             'dd' => 2.5,
-            'ee' => ['b' => 'b'],
+            'ee' => ['ee' => 'ee'],
             'ff' => null,
             'gg' => null,
         ]);
@@ -46,7 +48,7 @@ class DataModelTest extends TestCase
         $this->assertSame('greeting', $data->ro);
         $this->assertFalse($data->c);
         $this->assertSame(2.5, $data->getD());
-        $this->assertEquals(['b' => 'b'], $data->getE());
+        $this->assertEquals(['ee' => 'ee'], $data->getE());
     }
 
     public function testSetUndefinedProp()

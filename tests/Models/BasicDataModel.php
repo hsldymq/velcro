@@ -6,7 +6,7 @@ namespace Archman\Velcro\Tests\Models;
 
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
-use Archman\Velcro\Readonly;
+use Archman\Velcro\RO;
 
 class BasicDataModel extends DataModel
 {
@@ -16,7 +16,7 @@ class BasicDataModel extends DataModel
     /**
      * @var string 只读, 试图修改该属性会抛出异常
      */
-    #[Field('ro'), Readonly]
+    #[Field('ro'), RO]
     public string $ro;
 
     #[Field('cc')]
@@ -28,7 +28,7 @@ class BasicDataModel extends DataModel
     /**
      * @var array 对非public属性,Readonly会被忽视
      */
-    #[Field('ee'), Readonly]
+    #[Field('ee'), RO]
     private array $e;
 
     #[Field('ff')]

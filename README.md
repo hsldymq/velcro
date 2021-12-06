@@ -8,7 +8,7 @@
 use Archman\Velcro\Converters\DateTimeConverter;
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
-use Archman\Velcro\Readonly;
+use Archman\Velcro\RO;
  
 class Foo extends DataModel
 {
@@ -18,7 +18,7 @@ class Foo extends DataModel
     #[Field('field2'), DateTimeConverter(DateTimeConverter::ISO_8601)]
     public DateTime $val2;
 
-    #[Field('field3'), Readonly]
+    #[Field('field3'), RO]
     public string $val3;
 }
 
@@ -207,19 +207,20 @@ assert($info->school->name === 'xxx');
 
 ## 只读属性
 有些情况下,你可能需要你的模型是不可变的, 例如你有一个全局配置的模型对象,你不希望使用方更改配置的值,你可以对类或属性标记Readonly来达到目的
+
 ```php
 <?php
 
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Exceptions\ReadonlyException;
 use Archman\Velcro\Field;
-use Archman\Velcro\Readonly;
+use Archman\Velcro\RO;
 
 // 将属性标记Readonly, 使得指定属性变为只读
 class ConfigA extends DataModel
 {
     #[Field('conf1')]
-    #[Readonly]
+    #[RO]
     public string $config1;
     
     #[Field('conf2')]
@@ -240,7 +241,7 @@ assert($c->config2 === 222);
 
 
 // 将类标记为Readonly, 其中所有标记了Field的属性都会变为只读
-#[Readonly]
+#[RO]
 class ConfigB extends DataModel
 {
     #[Field('conf1')]

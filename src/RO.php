@@ -10,7 +10,7 @@ use Attribute;
  * Readonly 只对public属性有效
  */
 #[Attribute]
-class Readonly
+class RO
 {
 
 }
