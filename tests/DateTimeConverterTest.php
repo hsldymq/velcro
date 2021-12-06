@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Exceptions\ConversionException;
-use Archman\Velcro\Tests\Models\DateTimeDataModel;
-use Archman\Velcro\Tests\Models\InvalidDateTimeDataModel;
+use Archman\Velcro\Tests\Models\DateTimeCases\DateTimeDataModel;
+use Archman\Velcro\Tests\Models\DateTimeCases\InvalidDateTimeDataModel;
 use PHPUnit\Framework\TestCase;
 
 class DateTimeConverterTest extends TestCase

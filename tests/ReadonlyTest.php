@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Exceptions\ReadonlyException;
-use Archman\Velcro\Tests\Models\ReadOnlyClassModel;
-use Archman\Velcro\Tests\Models\ReadOnlyClassModel_ForPHP81;
-use Archman\Velcro\Tests\Models\ReadOnlyFieldModel;
-use Archman\Velcro\Tests\Models\ReadOnlyFieldModel_ForPHP81;
+use Archman\Velcro\Tests\Models\ReadonlyCases\ReadOnlyClassModel;
+use Archman\Velcro\Tests\Models\ReadonlyCases\ReadOnlyClassModel_ForPHP81;
+use Archman\Velcro\Tests\Models\ReadonlyCases\ReadOnlyFieldModel;
+use Archman\Velcro\Tests\Models\ReadonlyCases\ReadOnlyFieldModel_ForPHP81;
 use PHPUnit\Framework\TestCase;
 
 class ReadonlyTest extends TestCase

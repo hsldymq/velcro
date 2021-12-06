@@ -7,8 +7,8 @@ namespace Archman\Velcro\Tests;
 use Archman\Velcro\Exceptions\ConversionException;
 use Archman\Velcro\Property;
 use Archman\Velcro\Tests\Models\BasicDataModel;
-use Archman\Velcro\Tests\Models\EmbedDataModel;
-use Archman\Velcro\Tests\Models\InvalidEmbedDataModel;
+use Archman\Velcro\Tests\Models\EmbedCases\EmbedDataModel;
+use Archman\Velcro\Tests\Models\EmbedCases\InvalidEmbedDataModel;
 use PHPUnit\Framework\TestCase;
 
 class PropertyTest extends TestCase

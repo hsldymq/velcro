@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\Velcro\Tests\Models;
+namespace Archman\Velcro\Tests\Models\DateTimeCases;
 
 use Archman\Velcro\Converters\DateTimeConverter;
 use Archman\Velcro\DataModel;
