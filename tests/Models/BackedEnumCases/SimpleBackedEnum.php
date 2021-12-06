@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\Velcro\Tests\Models;
+namespace Archman\Velcro\Tests\Models\BackedEnumCases;
 
 enum SimpleBackedEnum: int
 {

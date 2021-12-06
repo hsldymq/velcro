@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Archman\Velcro\Tests\Models;
+namespace Archman\Velcro\Tests\Models\BackedEnumCases;
 
 use Archman\Velcro\Converters\BackedEnumConverter;
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
-use Archman\Velcro\RO;
 
 class SimpleEnumModel extends DataModel
 {
