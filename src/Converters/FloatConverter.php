@@ -12,11 +12,18 @@ use TypeError;
 #[Attribute]
 class FloatConverter implements ConverterInterface
 {
+    private Property $boundProperty;
+
     public function __construct(private array $expectTypes = [])
     {
     }
 
-    public function convert(mixed $fieldValue, Property $property): float
+    public function bindToProperty(Property $property)
+    {
+        $this->boundProperty = $property;
+    }
+
+    public function convert(mixed $fieldValue): float
     {
         if (is_float($fieldValue)) {
             return $fieldValue;

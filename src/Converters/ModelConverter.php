@@ -12,22 +12,30 @@ use TypeError;
 #[Attribute]
 class ModelConverter implements ConverterInterface
 {
+    private Property $boundProperty;
+
     public function __construct(private string $modelClass = '')
     {
     }
 
-    public function convert(mixed $fieldValue, Property $property): DataModel
+    public function bindToProperty(Property $property)
     {
         if ($this->modelClass) {
             if (!is_subclass_of($this->modelClass, DataModel::class)) {
                 throw new TypeError("{$this->modelClass} is not a subclass of DataModel");
             }
-            $dataModelClass = $this->modelClass;
-        } else if ($property->isDataModel()) {
-            $dataModelClass = $property->getDataModelTypes()[0];
-        } else {
+        } else if (!$property->isDataModel()) {
             throw new TypeError("the type of the property is not a subclass of DataModel");
+        } else {
+            $this->modelClass = $property->getDataModelTypes()[0];
         }
+
+        $this->boundProperty = $property;
+    }
+
+    public function convert(mixed $fieldValue): DataModel
+    {
+        $dataModelClass = $this->modelClass;
 
         return new $dataModelClass($fieldValue);
     }

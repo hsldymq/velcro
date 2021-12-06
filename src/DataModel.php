@@ -156,7 +156,10 @@ abstract class DataModel
                     $legacyReadonly = true;
                 } else if (is_subclass_of($attrName, ConverterInterface::class) && !$propInfo['converter']) {
                     try {
-                        $propInfo['converter'] = $each->newInstance();
+                        /** @var ConverterInterface $converter */
+                        $converter = $each->newInstance();
+                        $converter->bindToProperty($property);
+                        $propInfo['converter'] = $converter;
                     } catch (Throwable $e) {
                         throw $this->makeConversionException($each->getName(), $propName, $e);
                     }
@@ -187,14 +190,12 @@ abstract class DataModel
             if (!array_key_exists($fieldName, $this->data)) {
                 continue;
             }
-            /** @var Property $prop */
-            $prop = $info['property'];
 
             $value = $this->data[$fieldName];
             /** @var ConverterInterface $converter */
             if ($converter = $info['converter']) {
                 try {
-                    $value = $converter->convert($value, $prop);
+                    $value = $converter->convert($value);
                 } catch (Throwable $e) {
                     throw $this->makeConversionException(get_class($converter), $propName, $e);
                 }

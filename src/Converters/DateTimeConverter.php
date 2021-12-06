@@ -19,11 +19,18 @@ class DateTimeConverter implements ConverterInterface
     /** @var int 毫秒时间戳 */
     const TIMESTAMP_MS = 2;
 
+    private Property $boundProperty;
+
     public function __construct(private int $type)
     {
     }
 
-    public function convert(mixed $fieldValue, Property $property): \DateTime
+    public function bindToProperty(Property $property)
+    {
+        $this->boundProperty = $property;
+    }
+
+    public function convert(mixed $fieldValue): \DateTime
     {
         return match ($this->type) {
             self::TIMESTAMP => new \DateTime("@{$fieldValue}"),

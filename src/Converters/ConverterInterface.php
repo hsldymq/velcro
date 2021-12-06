@@ -8,5 +8,7 @@ use Archman\Velcro\Property;
 
 interface ConverterInterface
 {
-    public function convert(mixed $fieldValue, Property $property): mixed;
+    public function bindToProperty(Property $property);
+
+    public function convert(mixed $fieldValue): mixed;
 }
