@@ -12,11 +12,18 @@ use TypeError;
 #[Attribute]
 class BoolConverter implements ConverterInterface
 {
+    private Property $boundProperty;
+
     public function __construct(private array $expectTypes = [])
     {
     }
 
-    public function convert(mixed $fieldValue, Property $property): bool
+    public function bindToProperty(Property $property)
+    {
+        $this->boundProperty = $property;
+    }
+
+    public function convert(mixed $fieldValue): bool
     {
         if (is_bool($fieldValue)) {
             return $fieldValue;

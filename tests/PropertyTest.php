@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Archman\Velcro\Tests;
 
+use Archman\Velcro\Exceptions\ConversionException;
 use Archman\Velcro\Property;
 use Archman\Velcro\Tests\Models\BasicDataModel;
-use Archman\Velcro\Tests\Models\EmbedDataModel;
+use Archman\Velcro\Tests\Models\EmbedCases\EmbedDataModel;
+use Archman\Velcro\Tests\Models\EmbedCases\InvalidEmbedDataModel;
 use PHPUnit\Framework\TestCase;
 
 class PropertyTest extends TestCase
@@ -103,5 +105,14 @@ class PropertyTest extends TestCase
         $propName = 'foo3';
         $p = new Property($refl->getProperty($propName), 'foo3');
         $this->assertTrue($p->isDataModel());
+    }
+
+    public function testInvalidEmbedDataModel()
+    {
+        $this->expectException(ConversionException::class);
+
+        new InvalidEmbedDataModel([
+            'baz1' => ['abc' => 1.5],
+        ]);
     }
 }

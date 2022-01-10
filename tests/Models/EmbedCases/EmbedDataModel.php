@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\Velcro\Tests\Models;
+namespace Archman\Velcro\Tests\Models\EmbedCases;
 
 use Archman\Velcro\Converters\ModelConverter;
 use Archman\Velcro\DataModel;
@@ -22,12 +22,6 @@ class EmbedDataModel extends DataModel
 
     #[Field('foo3'), ModelConverter(Foo::class)]
     public false|Foo|Bar $foo3;
-
-    #[Field('baz1'), ModelConverter]
-    public Baz $baz1;
-
-    #[Field('baz2'), ModelConverter(Baz::class)]
-    public $baz2;
 }
 
 class Foo extends DataModel
@@ -43,9 +37,4 @@ class Bar extends DataModel
 {
     #[Field('stringField')]
     public string $stringValue;
-}
-
-class Baz
-{
-
 }

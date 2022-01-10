@@ -5,52 +5,49 @@
 ```php
 <?php
 
-use Archman\Velcro\Converters\DateTimeConverter;
+use Archman\Velcro\Converters\DateTimeImmutableConverter;
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
-use Archman\Velcro\Readonly;
+use Archman\Velcro\RO;
  
 class Foo extends DataModel
 {
     #[Field('field1')]
     public int $val1;
 
-    #[Field('field2'), DateTimeConverter(DateTimeConverter::ISO_8601)]
-    public DateTime $val2;
+    #[Field('field2'), DateTimeImmutableConverter(DateTimeImmutableConverter::ISO_8601)]
+    public DateTimeImmutable $val2;
 
-    #[Field('field3'), Readonly]
+    #[Field('field3'), RO]
     public string $val3;
+    
+    #[Field('field4')]
+    public readonly string $val4;
 }
 
 $foo = new Foo([
     'field1' => 123,
     'field2' => '2021-01-01T00:00:00',
-    'field3' => 'readonly value',
+    'field3' => 'value for readonly field',
+    'field4' => 'value for PHP 8.1 readonly field'
 ]);
 
 assert($foo->val1 === 123);
 assert($foo->val2->format('Y-m-d H:i:s') === '2021-01-01 00:00:00');
-assert($foo->val3 === 'readonly value');
-$foo->val3 = 'new value'; // it will throw an exception
+assert($foo->val3 === 'value for readonly field');
+assert($foo->val4 === 'value for PHP 8.1 readonly field');
+$foo->val3 = 'new value'; // It throws an exception.
 ```
 
 # 简介
-PHP现在有了type hinting, 有typed properties,有了union types，再配合strict types，我们写出的代码相对过去能拥有更佳的类型安全.
+这个库帮助你用更少的代码自动将关联数组的值附给对象的属性.
 
-所以过去一些使用关联数组来组织信息的地方，现在我可能会使用值对象的方式来组织信息.
+### 什么场景下我会需要这种东西?
+当你需要从接口请求参数来创建DTO; 当你需要通过对象的形式来管理配置; 抑或者从外部数据源得到的数据恢复成对象时。
 
-以前一部分类似于这样`doSomething($foo['bar'])`的代码
+从这些预先定义好的数据恢复时，往往就需要大量无趣的组装操作，通常还伴随着一些前置条件逻辑，比如判断字段是否存在，类型是否需要转换。
 
-现在会写成这样`doSomething($foo->bar)`
-
-这样：
-* 我在重构这部分代码时更容易
-* 这些类型错误可以更早的暴露出来
-* 静态分析器也可以帮助我提前发现一些问题
-
-所以当我真正要做这件事的时候，我就需要把关联数组中的数据一个个地赋给对象的属性，极其枯燥且易错.
-
-这种事情应该交给程序来做,于是有了这个小玩意。
+用代码生成工具是一种减少人力的方法。 而这个库是另一种方法，它让你只需要定义类属性所关联的字段，剩下的组装操作由库来完成。
 
 # 要求
 PHP >= 8.0
@@ -107,32 +104,33 @@ class Foo
 ### 类型匹配
 尽管内部帮你解决了赋值的问题, 但是它不会帮你匹配类型,更不会自动帮你转换类型, 所以当你的类属性和数据字段的类型不一致时,会抛出异常,因为Velcro的类都是以strict_types模式定义的.
 
-## 数据转换器
+## 数据转换器 (Converter)
 然而你定义的类属性,可能是任意类型. 同时你的数据可能不是来自于程序内部,有可能是http请求/响应体,或者外部配置/存储,异步消息等,双方的类型可能并不匹配.
 
 此时,你需要用到数据转换器, 把来源数据转换成其对应属性的类型, 这样你可按照使用上更舒服的方式去定义类的属性.
 
 ### 使用数据转换器
-当我们从第三方接口获得数据中包含了一个时间戳的字段,比如`$data['time']`,而在我们的代码中需要以`DateTime`类型来使用, 与其我们手动的编写转换代码, 我们可以这样定义
+当我们从第三方接口获得数据中包含了一个时间戳的字段,比如`$data['time']`,而在我们的代码中需要以`DateTimeImmutable`类型来使用, 与其我们手动的编写转换代码, 我们可以这样定义
+
 ```php
 <?php
 
-use Archman\Velcro\Converters\DateTimeConverter;
+use Archman\Velcro\Converters\DateTimeImmutableConverter;
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Field;
 
 class Response extends DataModel
 {
     #[Field('time')]
-    #[DateTimeConverter(DateTimeConverter::TIMESTAMP)]
-    public DateTime $datetime;
+    #[DateTimeImmutableConverter(DateTimeImmutableConverter::TIMESTAMP)]
+    public DateTimeImmutable $datetime;
 }
 new Response(['time' => 1609430400]);
 ```
 
-Velcro会先使用`DateTimeConverter`帮你把时间戳转换成DateTime类型再赋给对应的属性.
+Velcro会先使用`DateTimeConverter`帮你把时间戳转换成 DateTimeImmutable 类型再赋给对应的属性.
 
-Velcro中预先定义了少量的转换器,用来应对不同的场景.
+Velcro中预先定义了一些的转换器,用来应对不同的场景.
 
 ### 嵌套DataModel
 你可以使用`ModelConverter`和`ModelListConverter`这两个转换器,实现数据模型的嵌套.
@@ -206,20 +204,20 @@ assert($info->school->name === 'xxx');
 **通过实现ConverterInterface接口,你可以实现自己的数据转换器**
 
 ## 只读属性
-有些情况下,你可能需要你的模型是不可变的, 例如你有一个全局配置的模型对象,你不希望使用方更改配置的值,你可以对类或属性标记Readonly来达到目的
+有些情况下,你可能需要你的模型是不可变的, 例如你有一个全局配置的模型对象,你不希望使用方更改配置的值,你可以对类或属性标记RO来达到目的
+
 ```php
 <?php
 
 use Archman\Velcro\DataModel;
 use Archman\Velcro\Exceptions\ReadonlyException;
 use Archman\Velcro\Field;
-use Archman\Velcro\Readonly;
+use Archman\Velcro\RO;
 
-// 将属性标记Readonly, 使得指定属性变为只读
+// 将属性添加RO注解, 会使该属性变为只读
 class ConfigA extends DataModel
 {
-    #[Field('conf1')]
-    #[Readonly]
+    #[Field('conf1'), RO]
     public string $config1;
     
     #[Field('conf2')]
@@ -239,8 +237,8 @@ $c->config2 = 222;
 assert($c->config2 === 222);
 
 
-// 将类标记为Readonly, 其中所有标记了Field的属性都会变为只读
-#[Readonly]
+// 当将类添加RO注解, 等同于将其中所有标记了Field都会变为只读
+#[RO]
 class ConfigB extends DataModel
 {
     #[Field('conf1')]
@@ -269,6 +267,27 @@ try {
 }
 
 $c->config3 = 'xxx'; // 没有标记Field, 不会抛出异常
+```
+
+因为PHP 8.1开始增加了readonly关键字，所以当你的环境使用8.1以及之后的版本，你可以抛弃RO直接使用readonly关键来标记只读属性来达到相同的目的
+```php
+<?php
+
+use Archman\Velcro\DataModel;
+use Archman\Velcro\Exceptions\ReadonlyException;
+use Archman\Velcro\Field;
+use Archman\Velcro\RO;
+
+// 将属性添加RO注解, 会使该属性变为只读
+class ConfigX extends DataModel
+{
+    #[Field('conf1')]       // 它跟config2有相同的效果
+    public readonly string $config1;
+    
+    #[Field('conf2'), RO]
+    public int $config2;
+}
+
 ```
 
 ## 私有属性

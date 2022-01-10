@@ -6,8 +6,8 @@ namespace Archman\Velcro\Tests;
 
 use Archman\Velcro\Converters\ModelListConverter;
 use Archman\Velcro\Exceptions\ConversionException;
-use Archman\Velcro\Tests\Models\EmbedDataListModel;
-use Archman\Velcro\Tests\Models\Outer;
+use Archman\Velcro\Tests\Models\EmbedCases\EmbedDataListModel;
+use Archman\Velcro\Tests\Models\EmbedCases\Outer;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 

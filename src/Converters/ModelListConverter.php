@@ -12,6 +12,8 @@ use TypeError;
 #[Attribute]
 class ModelListConverter implements ConverterInterface
 {
+    private Property $boundProperty;
+
     public function __construct(private string $modelClass)
     {
         if (!is_subclass_of($this->modelClass, DataModel::class)) {
@@ -19,16 +21,21 @@ class ModelListConverter implements ConverterInterface
         }
     }
 
-    public function convert(mixed $fieldValue, Property $property): array
+    public function bindToProperty(Property $property)
+    {
+        $this->boundProperty = $property;
+    }
+
+    public function convert(mixed $fieldValue): array
     {
         if (!is_array($fieldValue)) {
-            throw new TypeError("value of {$property->getBoundFieldName()} should be a type of array");
+            throw new TypeError("value of {$this->boundProperty->getBoundFieldName()} should be a type of array");
         }
 
         $result = [];
         foreach ($fieldValue as $key => $each) {
             if (!is_array($each)) {
-                throw new TypeError("the element of {$property->getBoundFieldName()} should be a type of array");
+                throw new TypeError("the element of {$this->boundProperty->getBoundFieldName()} should be a type of array");
             }
 
             $result[$key] = new $this->modelClass($each);

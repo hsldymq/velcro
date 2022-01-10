@@ -1,7 +1,12 @@
 language: php
 
+os:
+  - linux
+dist: bionic
+
 php:
   - '8.0'
+  - '8.1.0'
 
 install: composer install
 

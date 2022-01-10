@@ -12,11 +12,18 @@ use TypeError;
 #[Attribute]
 class IntConverter implements ConverterInterface
 {
+    private Property $boundProperty;
+
     public function __construct(private array $expectTypes = [])
     {
     }
 
-    public function convert(mixed $fieldValue, Property $property): int
+    public function bindToProperty(Property $property)
+    {
+        $this->boundProperty = $property;
+    }
+
+    public function convert(mixed $fieldValue): int
     {
         if (is_int($fieldValue)) {
             return $fieldValue;

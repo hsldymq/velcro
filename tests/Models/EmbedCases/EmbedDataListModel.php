@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Archman\Velcro\Tests\Models;
+namespace Archman\Velcro\Tests\Models\EmbedCases;
 
 use Archman\Velcro\Converters\ModelListConverter;
 use Archman\Velcro\DataModel;
