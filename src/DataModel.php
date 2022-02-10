@@ -7,7 +7,6 @@ namespace Archman\Velcro;
 use Archman\Velcro\Converters\ConverterInterface;
 use Archman\Velcro\Exceptions\ConversionException;
 use Archman\Velcro\Exceptions\ReadonlyException;
-use Closure;
 use ReflectionClass;
 use RuntimeException;
 use Throwable;
@@ -15,20 +14,9 @@ use Throwable;
 abstract class DataModel
 {
     /**
-     * @var array 缓存的DataModel子类解析信息. 当多次实例化同一个DataModel子类时, 只需要进行一次反射, 避免不必要的性能开销.
-     *  [
-     *      $className => [                                             // 完整(含命名空间)的类名
-     *          $propName => [                                          // 定义了Field Attribute的属性
-     *              'property' => <Property>                            // 属性信息
-     *              'fieldName' => <string>,                            // 数据的字段名
-     *              'converter' => <ConverterInterface|null>,           // 数据转换器
-     *              'setter' => <Closure|null>,                         // 用于对private属性进行赋值
-     *              'legacyReadonly' => <bool>,                         // 是否是只读 (8.0或8.1以上没标记readonly关键字的情况下设置)
-     *          ],
-     *          ...
-     *      ],
-     *      ...
-     *  ]
+     * 缓存的DataModel子类解析信息. 当多次实例化同一个DataModel子类时, 只需要进行一次反射, 避免不必要的性能开销.
+     *
+     * @var array<string, PropertyMetaCollection>
      */
     private static array $classesInfo = [];
 
@@ -95,7 +83,7 @@ abstract class DataModel
     {
         $className = $this->getClassName();
         if (!isset(self::$classesInfo[$className])) {
-            self::$classesInfo[$className] = $this->parsePropsInfo($className);
+            self::$classesInfo[$className] = $this->parseProps($className);
         }
         $this->doAssign();
     }
@@ -120,93 +108,92 @@ abstract class DataModel
         }
     }
 
-    final protected function getPropsInfo(): array
+    final protected function getPropsInfo(): PropertyMetaCollection
     {
         return self::$classesInfo[$this->getClassName()];
     }
 
-    private function parsePropsInfo(string $className): array
+    private function parseProps(string $className): PropertyMetaCollection
     {
-        $propsInfo = [];
+        $propertyMetaCollection = new PropertyMetaCollection();
+
         $obj = new ReflectionClass($className);
         $hasClassReadonlyAttr = ($obj->getAttributes(RO::class)[0] ?? null) !== null;
-
         foreach ($obj->getProperties() as $prop) {
-            $propName = $prop->getName();
-            $isReadOnlyProp = version_compare(PHP_VERSION, '8.1.0', '>=') ? $prop->isReadOnly() : false;
+            $isLanguageReadOnlyProp = version_compare(PHP_VERSION, '8.1.0', '>=') && $prop->isReadOnly();
 
             $fieldAttr = $prop->getAttributes(Field::class)[0] ?? null;
             if (!$fieldAttr) {
                 continue;
             }
 
-            $legacyReadonly = $hasClassReadonlyAttr;
+            $propName = $prop->getName();
             $fieldName = $fieldAttr->newInstance()->getFieldName();
             $property = new Property($prop, $fieldName);
-            $propInfo = [
-                'property' => $property,
-                'fieldName' => $fieldName,
-                'converter' => null,
-                'setter' => null,
-                'legacyReadonly' => false,
-            ];
+            $converter = null;
+            $setter = null;
+            $legacyReadonly = $hasClassReadonlyAttr;
             foreach ($prop->getAttributes() as $each) {
                 $attrName = $each->getName();
                 if ($attrName === RO::class && $property->isPublic()) {
                     $legacyReadonly = true;
-                } else if (is_subclass_of($attrName, ConverterInterface::class) && !$propInfo['converter']) {
+                } else if (is_subclass_of($attrName, ConverterInterface::class) && !$converter) {
                     try {
                         /** @var ConverterInterface $converter */
                         $converter = $each->newInstance();
                         $converter->bindToProperty($property);
-                        $propInfo['converter'] = $converter;
                     } catch (Throwable $e) {
                         throw $this->makeConversionException($each->getName(), $propName, $e);
                     }
                 }
             }
-            if ($prop->isPrivate() || $isReadOnlyProp) {
-                $propInfo['setter'] = (function(string $propName) {
+            if ($prop->isPrivate() || $isLanguageReadOnlyProp) {
+                $setter = (function(string $propName) {
                     return function(mixed $value) use ($propName) {
                         $this->$propName = $value;
                     };
                 })($propName);
             }
-            if ($legacyReadonly && $isReadOnlyProp) {
+            if ($legacyReadonly && $isLanguageReadOnlyProp) {
                 $legacyReadonly = false;
             }
-            $propInfo['legacyReadonly'] = $legacyReadonly;
 
-            $propsInfo[$propName] = $propInfo;
+            $propertyMetaCollection->addPropertyMeta(new PropertyMeta(
+                $propName,
+                $fieldName,
+                $property,
+                $converter,
+                $setter,
+                $legacyReadonly,
+            ));
         }
 
-        return $propsInfo;
+        return $propertyMetaCollection;
     }
 
     private function doAssign()
     {
-        foreach ($this->getPropsInfo() as $propName => $info) {
-            $fieldName = $info['fieldName'];
+        foreach ($this->getPropsInfo()->iter() as $eachPropMeta) {
+            $propName = $eachPropMeta->getPropertyName();
+            $fieldName = $eachPropMeta->getFieldName();
             if (!array_key_exists($fieldName, $this->data)) {
                 continue;
             }
 
             $value = $this->data[$fieldName];
-            /** @var ConverterInterface $converter */
-            if ($converter = $info['converter']) {
+            if ($converter = $eachPropMeta->getConverter()) {
                 try {
                     $value = $converter->convert($value);
                 } catch (Throwable $e) {
                     throw $this->makeConversionException(get_class($converter), $propName, $e);
                 }
             }
-            /** @var Closure $setter */
-            if ($setter = $info['setter']) {
+            if ($setter = $eachPropMeta->getSetter()) {
                 $setter->bindTo($this, $this)($value);
             } else {
                 $this->$propName = $value;
             }
-            if ($info['legacyReadonly']) {
+            if ($eachPropMeta->isLegacyReadonly()) {
                 $this->readonlyPropsVal[$propName] = $this->$propName;
                 unset($this->$propName);
             }
