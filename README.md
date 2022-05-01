@@ -1,5 +1,5 @@
 # Velcro
-[![Build Status](https://travis-ci.com/hsldymq/velcro.svg?branch=main)](https://travis-ci.com/hsldymq/velcro)
+![tests](https://github.com/hsldymq/velcro/actions/workflows/unit-tests.yml/badge.svg)
 [![codecov](https://codecov.io/gh/hsldymq/velcro/branch/main/graph/badge.svg?token=73StDTfHBx)](https://codecov.io/gh/hsldymq/velcro)
 
 ```php
