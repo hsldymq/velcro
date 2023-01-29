@@ -36,7 +36,7 @@ assert($foo->p1 === 123);
 assert($foo->p2->format('Y-m-d H:i:s') === '2021-01-01 00:00:00');
 assert($foo->p3 === 'value for readonly field');
 assert($foo->p4 === 'value for PHP 8.1 readonly field');
-$foo->p4 = 'new value'; // It throws an exception.
+$foo->p3 = 'new value'; // It throws an exception.
 ```
 
 # 简介
