@@ -12,31 +12,31 @@ use Archman\Velcro\RO;
  
 class Foo extends DataModel
 {
-    #[Field('field1')]
-    public int $val1;
+    #[Field('f1')]
+    public int $p1;
 
-    #[Field('field2'), DateTimeImmutableConverter(DateTimeImmutableConverter::ISO_8601)]
-    public DateTimeImmutable $val2;
+    #[Field('f2'), DateTimeImmutableConverter(DateTimeImmutableConverter::ISO_8601)]
+    public DateTimeImmutable $p2;
 
-    #[Field('field3'), RO]
-    public string $val3;
+    #[Field('f3'), RO]
+    public string $p3;
     
-    #[Field('field4')]
-    public readonly string $val4;
+    #[Field('f4')]
+    public readonly string $p4;
 }
 
 $foo = new Foo([
-    'field1' => 123,
-    'field2' => '2021-01-01T00:00:00',
-    'field3' => 'value for readonly field',
-    'field4' => 'value for PHP 8.1 readonly field'
+    'f1' => 123,
+    'f2' => '2021-01-01T00:00:00',
+    'f3' => 'value for readonly field',
+    'f4' => 'value for PHP 8.1 readonly field'
 ]);
 
-assert($foo->val1 === 123);
-assert($foo->val2->format('Y-m-d H:i:s') === '2021-01-01 00:00:00');
-assert($foo->val3 === 'value for readonly field');
-assert($foo->val4 === 'value for PHP 8.1 readonly field');
-$foo->val3 = 'new value'; // It throws an exception.
+assert($foo->p1 === 123);
+assert($foo->p2->format('Y-m-d H:i:s') === '2021-01-01 00:00:00');
+assert($foo->p3 === 'value for readonly field');
+assert($foo->p4 === 'value for PHP 8.1 readonly field');
+$foo->p4 = 'new value'; // It throws an exception.
 ```
 
 # 简介
