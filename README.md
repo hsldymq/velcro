@@ -1,5 +1,5 @@
 # Velcro
-![tests](https://github.com/hsldymq/velcro/actions/workflows/unit-tests.yml/badge.svg)
+[![tests](https://github.com/hsldymq/velcro/actions/workflows/test.yml/badge.svg)](https://github.com/hsldymq/velcro/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/hsldymq/velcro/branch/main/graph/badge.svg?token=73StDTfHBx)](https://codecov.io/gh/hsldymq/velcro)
 
 ```php
